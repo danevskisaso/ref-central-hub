@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Referees — Ref Central Hub</title>
+<title>Calendar — Ref Central Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 <link rel="stylesheet" href="css/dashboard.css">
 <link rel="stylesheet" href="css/referees.css">
+<link rel="stylesheet" href="css/fitness.css">
+<link rel="stylesheet" href="css/calendar.css">
 </head>
 <body class="app-body">
 
@@ -35,7 +37,7 @@
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="2.5" width="6.5" height="6.5" rx="1.5"/><rect x="11" y="2.5" width="6.5" height="6.5" rx="1.5"/><rect x="2.5" y="11" width="6.5" height="6.5" rx="1.5"/><rect x="11" y="11" width="6.5" height="6.5" rx="1.5"/></svg></span>
         <span class="nav-text">Dashboard</span>
       </a>
-      <a class="nav-item active" href="referees.html">
+      <a class="nav-item" href="referees.html">
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="6.5" r="2.7"/><path d="M2 17c0-2.8 2.2-5 5-5s5 2.2 5 5"/><circle cx="14.5" cy="7.5" r="2.1"/><path d="M12.8 12.3c2.3.2 4.2 2.1 4.2 4.7"/></svg></span>
         <span class="nav-text">Referees</span>
       </a>
@@ -79,7 +81,7 @@
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="3.5" width="15" height="13.5" rx="1.5"/><path d="M2.5 7.5h15M6 2v3M14 2v3"/><path d="M7 11.2l1.8 1.8L13 9" /></svg></span>
         <span class="nav-text">Training Programmes</span>
       </a>
-      <a class="nav-item" href="calendar.html">
+      <a class="nav-item active" href="calendar.html">
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="3.5" width="15" height="13.5" rx="1.5"/><path d="M2.5 7.5h15M6 2v3M14 2v3"/></svg></span>
         <span class="nav-text">Calendar</span>
       </a>
@@ -146,7 +148,7 @@
     </button>
     <div class="search-box">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input type="text" id="refSearch" placeholder="Search referees, matches, reports…">
+      <input type="text" placeholder="Search referees, matches, reports…">
     </div>
     <div class="topbar-spacer"></div>
     <div class="topbar-actions">
@@ -168,109 +170,96 @@
   <main class="content">
     <div class="page-head">
       <div>
-        <h1>Referee Database</h1>
-        <p class="page-sub">Search, filter and manage every referee in your ecosystem.</p>
+        <h1>Calendar</h1>
+        <p class="page-sub">Every match, training topic, fitness assessment and screening — tagged with the referee's name.</p>
       </div>
-      <button class="btn btn-primary" id="openAddReferee">
+      <button class="btn btn-primary" id="openAddEvent">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-        Add Referee
+        Add Event
       </button>
     </div>
 
+    <div class="kpi-grid" id="calKpis" style="grid-template-columns:repeat(4,1fr);"></div>
+
     <div class="filter-row">
-      <select class="filter-select" id="filterCategory">
-        <option value="">All Categories</option>
-      </select>
-      <select class="filter-select" id="filterType">
-        <option value="">Referee / Assistant</option>
-      </select>
-      <select class="filter-select" id="filterStatus">
-        <option value="">All Statuses</option>
-      </select>
-      <div class="filter-count" id="filterCount"></div>
+      <select class="filter-select" id="filterRefCal"><option value="">All Referees</option></select>
+      <select class="filter-select" id="filterTypeCal"><option value="">All Topics</option></select>
+      <button class="btn btn-ghost" id="todayBtn" style="padding:8px 14px;font-size:12.5px;">Today</button>
     </div>
 
-    <div class="referee-grid" id="refereeGrid"></div>
+    <div class="cal-layout">
+      <div class="card card-pad">
+        <div class="cal-header">
+          <button class="icon-btn" id="prevMonth"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="cal-month-label" id="calMonthLabel">—</div>
+          <button class="icon-btn" id="nextMonth"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button>
+        </div>
+        <div class="cal-weekdays">
+          <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-legend" id="calLegend"></div>
+      </div>
+
+      <div class="card card-pad">
+        <div class="card-head">
+          <div class="card-title" id="agendaTitle">Agenda</div>
+          <a href="#" class="card-link" id="clearDaySelect">Show all month</a>
+        </div>
+        <div class="agenda-list" id="agendaList"></div>
+      </div>
+    </div>
   </main>
 </div>
 
-<!-- ===== Add Referee modal ===== -->
-<div class="modal-overlay" id="addRefereeModal">
+<!-- ===== Add Event modal ===== -->
+<div class="modal-overlay" id="addEventModal">
   <div class="modal">
     <div class="modal-head">
       <div>
-        <h3>Add Referee</h3>
-        <p>Create a new referee profile in the database.</p>
+        <h3>Add Calendar Event</h3>
+        <p>Schedule a match, training topic, fitness test, screening or other event.</p>
       </div>
       <button class="modal-close" data-close-modal><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
     <div class="modal-body">
-      <form id="addRefereeForm">
+      <form id="addEventForm">
         <div class="form-grid">
           <div class="form-field full">
-            <label for="rfName">Full name</label>
-            <input type="text" id="rfName" placeholder="e.g. Julia Berg" required>
+            <label for="evReferee">Referee</label>
+            <select id="evReferee"></select>
+          </div>
+          <div class="form-field full">
+            <label for="evType">Event type</label>
+            <select id="evType"></select>
+          </div>
+          <div class="form-field full" id="evTopicWrap">
+            <label for="evTopicSelect">Topic</label>
+            <select id="evTopicSelect"></select>
+            <input type="text" id="evTopicText" placeholder="e.g. Real Madrid vs Manchester City" style="display:none; margin-top:8px;">
           </div>
           <div class="form-field">
-            <label for="rfCountry">Country</label>
-            <input type="text" id="rfCountry" placeholder="e.g. Netherlands" required>
+            <label for="evDate">Date</label>
+            <input type="date" id="evDate" required>
           </div>
           <div class="form-field">
-            <label for="rfFlag">Flag emoji</label>
-            <input type="text" id="rfFlag" placeholder="🇳🇱" maxlength="4">
+            <label for="evTime">Time</label>
+            <input type="time" id="evTime">
           </div>
-          <div class="form-field">
-            <label for="rfCategory">Category</label>
-            <select id="rfCategory"></select>
+          <div class="form-field full">
+            <label for="evLocation">Location (optional)</label>
+            <input type="text" id="evLocation" placeholder="e.g. Marbella Performance Centre">
           </div>
-          <div class="form-field">
-            <label for="rfType">Role on pitch</label>
-            <select id="rfType">
-              <option>Referee</option>
-              <option>Assistant Referee</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label for="rfAge">Age</label>
-            <input type="number" id="rfAge" min="18" max="60" placeholder="34">
-          </div>
-          <div class="form-field">
-            <label for="rfStatus">Status</label>
-            <select id="rfStatus"></select>
+          <div class="form-field full">
+            <label for="evNotes">Notes (optional)</label>
+            <input type="text" id="evNotes">
           </div>
         </div>
-        <div class="form-hint">Once created, open the referee's card to assign them to an organization and role.</div>
       </form>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" data-close-modal>Cancel</button>
-      <button class="btn btn-primary" id="submitAddReferee">Create Referee</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== Referee detail / org assignment modal ===== -->
-<div class="modal-overlay" id="refDetailModal">
-  <div class="modal">
-    <div class="modal-head">
-      <div>
-        <h3 id="rdName">—</h3>
-        <p id="rdMeta">—</p>
-      </div>
-      <button class="modal-close" data-close-modal><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div class="card-title" style="margin-bottom:10px;">Organizations &amp; Roles</div>
-      <div id="rdOrgList" class="org-assign-list"></div>
-
-      <div class="assign-row">
-        <select id="rdOrgSelect" class="filter-select"></select>
-        <select id="rdRoleSelect" class="filter-select"></select>
-        <button class="btn btn-primary" id="rdAssignBtn">Assign</button>
-      </div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" data-close-modal>Close</button>
+      <button class="btn btn-primary" id="submitAddEvent">Save Event</button>
     </div>
   </div>
 </div>
@@ -279,6 +268,6 @@
 
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
-<script src="js/referees.js"></script>
+<script src="js/calendar.js"></script>
 </body>
 </html>

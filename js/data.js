@@ -95,6 +95,67 @@ var BODY_STATUS_CYCLE = ['normal', 'monitor', 'modified', 'injured'];
 var BODY_STATUS_COLORS = { normal: '#18A558', monitor: '#FFC928', modified: '#FF8A28', injured: '#E63946' };
 var BODY_STATUS_LABELS = { normal: 'Normal', monitor: 'Monitor', modified: 'Modified', injured: 'Injured' };
 
+/* ---------------- Calendar ---------------- */
+
+var EVENT_TYPES = [
+  { id: 'match',        label: 'Match',         color: '#1473E6', topicMode: 'text' },
+  { id: 'training',     label: 'Training',      color: '#18A558', topicMode: 'training' },
+  { id: 'fitness_test', label: 'Fitness Test',  color: '#00B8D9', topicMode: 'fitness' },
+  { id: 'screening',    label: 'Screening',     color: '#1C5CAB', topicMode: 'screening' },
+  { id: 'course',       label: 'Course',        color: '#FFC928', topicMode: 'text' },
+  { id: 'seminar',      label: 'Seminar',       color: '#FFC928', topicMode: 'text' },
+  { id: 'meeting',      label: 'Meeting',       color: '#97A5B3', topicMode: 'text' },
+  { id: 'travel',       label: 'Travel',        color: '#97A5B3', topicMode: 'text' },
+  { id: 'medical',      label: 'Medical Appointment', color: '#E63946', topicMode: 'text' },
+  { id: 'deadline',     label: 'Deadline',      color: '#E63946', topicMode: 'text' }
+];
+
+/* Training topics — covers interval running, repeated sprint ability,
+   strength and every other session type from the spec's training module. */
+var TRAINING_TOPICS = [
+  'Recovery', 'Low Intensity', 'Medium Intensity', 'High Intensity',
+  'Speed', 'Repeated Sprint Ability', 'Speed Endurance',
+  'Aerobic Power', 'Aerobic Capacity', 'Tempo Running', 'Interval Running',
+  'Strength', 'Mobility', 'Injury Prevention', 'Agility', 'Coordination',
+  'Referee-Specific Training', 'Assistant Referee Training',
+  'Integrated Physical-Technical Training'
+];
+
+function refchEventTypeById(id) {
+  return EVENT_TYPES.filter(function (t) { return t.id === id; })[0];
+}
+
+function refchAddEvent(data) {
+  var ev = {
+    id: refchUid('ev'),
+    refereeId: data.refereeId,
+    type: data.type,
+    topic: data.topic,
+    date: data.date,
+    time: data.time || '',
+    location: data.location || '',
+    notes: data.notes || ''
+  };
+  refchState.events.push(ev);
+  refchSave();
+  return ev;
+}
+
+function refchRemoveEvent(id) {
+  refchState.events = refchState.events.filter(function (e) { return e.id !== id; });
+  refchSave();
+}
+
+function refchEventsFor(filters) {
+  filters = filters || {};
+  return refchState.events
+    .filter(function (e) { return !filters.refereeId || e.refereeId === filters.refereeId; })
+    .filter(function (e) { return !filters.type || e.type === filters.type; })
+    .filter(function (e) { return !filters.date || e.date === filters.date; })
+    .filter(function (e) { return !filters.month || e.date.slice(0, 7) === filters.month; })
+    .sort(function (a, b) { return a.date === b.date ? (a.time || '').localeCompare(b.time || '') : (a.date < b.date ? -1 : 1); });
+}
+
 function refchSeed() {
   var referees = [
     { id: 'r1', name: 'Alex Martin', country: 'Spain', flag: '🇪🇸', category: 'Elite', refType: 'Referee', age: 38, status: 'Available' },
@@ -157,12 +218,42 @@ function refchSeed() {
     { id: 'sr3', refereeId: 'r6', protocolId: 'nordbord_asym', date: '2026-02-10', value: 18.4, notes: 'Flagged — referred to medical' }
   ];
 
-  return { referees: referees, organizations: organizations, fitnessResults: fitnessResults, screeningResults: screeningResults };
+  var today = new Date();
+  function offsetDate(days) {
+    var d = new Date(today);
+    d.setDate(d.getDate() + days);
+    return d.toISOString().slice(0, 10);
+  }
+
+  var events = [
+    { id: 'ev1', refereeId: 'r1', type: 'match', topic: 'Bayern München vs Inter Milan', date: offsetDate(0), time: '20:00', location: 'Allianz Arena', notes: '' },
+    { id: 'ev2', refereeId: 'r2', type: 'match', topic: 'Porto vs Fenerbahçe', date: offsetDate(0), time: '18:45', location: 'Estádio do Dragão', notes: '' },
+    { id: 'ev3', refereeId: 'r3', type: 'match', topic: 'Barcelona vs Lyon', date: offsetDate(0), time: '21:00', location: 'Camp Nou', notes: '' },
+    { id: 'ev4', refereeId: 'r1', type: 'training', topic: 'Repeated Sprint Ability', date: offsetDate(1), time: '09:00', location: 'Marbella Performance Centre', notes: '' },
+    { id: 'ev5', refereeId: 'r1', type: 'training', topic: 'Interval Running', date: offsetDate(3), time: '09:00', location: 'Marbella Performance Centre', notes: '' },
+    { id: 'ev6', refereeId: 'r1', type: 'training', topic: 'Strength', date: offsetDate(5), time: '10:30', location: 'Gym — Home Base', notes: '' },
+    { id: 'ev7', refereeId: 'r2', type: 'training', topic: 'Recovery', date: offsetDate(1), time: '08:00', location: 'Home Base', notes: '' },
+    { id: 'ev8', refereeId: 'r3', type: 'training', topic: 'Speed', date: offsetDate(2), time: '09:30', location: 'Rome Training Centre', notes: '' },
+    { id: 'ev9', refereeId: 'r6', type: 'training', topic: 'Mobility', date: offsetDate(2), time: '08:30', location: 'Warsaw Medical Centre', notes: 'Modified — hamstring protocol' },
+    { id: 'ev10', refereeId: 'r1', type: 'fitness_test', topic: 'UEFA20', date: offsetDate(3), time: '11:00', location: 'Marbella Performance Centre', notes: '' },
+    { id: 'ev11', refereeId: 'r3', type: 'fitness_test', topic: 'Yo-Yo IR1', date: offsetDate(6), time: '10:00', location: 'Rome Training Centre', notes: '' },
+    { id: 'ev12', refereeId: 'r5', type: 'fitness_test', topic: 'Repeated Sprint Ability', date: offsetDate(6), time: '10:00', location: 'Rome Training Centre', notes: '' },
+    { id: 'ev13', refereeId: 'r6', type: 'fitness_test', topic: 'Sprint Test (40m)', date: offsetDate(9), time: '09:00', location: 'Warsaw Medical Centre', notes: 'Return-to-test clearance' },
+    { id: 'ev14', refereeId: 'r1', type: 'screening', topic: 'ForceDecks', date: offsetDate(4), time: '09:00', location: 'Marbella Performance Centre', notes: '' },
+    { id: 'ev15', refereeId: 'r6', type: 'screening', topic: 'NordBord', date: offsetDate(-2), time: '09:00', location: 'Warsaw Medical Centre', notes: 'Flagged — hamstring asymmetry' },
+    { id: 'ev16', refereeId: 'r4', type: 'medical', topic: 'Physiotherapy Review', date: offsetDate(5), time: '14:00', location: 'Belgrade Sports Clinic', notes: '' },
+    { id: 'ev17', refereeId: 'r1', type: 'course', topic: 'CORE 60 Seminar', date: offsetDate(2), time: '09:00', location: 'Nyon', notes: '' },
+    { id: 'ev18', refereeId: 'r3', type: 'course', topic: 'AR Women Course', date: offsetDate(4), time: '09:00', location: 'Nyon', notes: '' },
+    { id: 'ev19', refereeId: 'r2', type: 'deadline', topic: 'Match Assignment Deadline', date: offsetDate(7), time: '17:00', location: '', notes: '' }
+  ];
+
+  return { referees: referees, organizations: organizations, fitnessResults: fitnessResults, screeningResults: screeningResults, events: events };
 }
 
 function refchMigrate(state) {
   if (!state.fitnessResults) state.fitnessResults = [];
   if (!state.screeningResults) state.screeningResults = [];
+  if (!state.events) state.events = [];
   state.referees.forEach(function (r) {
     if (!r.anthro) r.anthro = { height: null, weight: null, bodyFat: null };
     if (!r.bodyMap) r.bodyMap = {};
