@@ -35,6 +35,66 @@ var CATEGORIES = ['Elite', 'International', 'National', 'Development'];
 var STATUSES = ['Available', 'Match Assigned', 'Modified Training', 'Injured', 'Return to Train'];
 var AVATAR_COLORS = ['#1473E6', '#00B8D9', '#18A558', '#1C5CAB', '#0D7A3E', '#E63946'];
 
+/* ---------------- Fitness test protocols ----------------
+   Benchmarks are indicative placeholders for demo purposes only —
+   replace with your federation's official UEFA/FIFA standards. */
+var FITNESS_PROTOCOLS = [
+  { id: 'uefa20',    name: 'UEFA20',                    unit: 'm',          dir: 'high', benchmark: 2000,  group: 'Field' },
+  { id: 'fifa_test', name: 'FIFA Fitness Test',          unit: 'pts',        dir: 'high', benchmark: 80,    group: 'Field' },
+  { id: 'ariet',     name: 'ARIET',                      unit: 'level',      dir: 'high', benchmark: 18,    group: 'Field' },
+  { id: 'yoyo_ir1',  name: 'Yo-Yo IR1',                  unit: 'm',          dir: 'high', benchmark: 2400,  group: 'Field' },
+  { id: 'yoyo_ir2',  name: 'Yo-Yo IR2',                  unit: 'm',          dir: 'high', benchmark: 1600,  group: 'Field' },
+  { id: 'sds',       name: 'SDS (Sprint + Distance)',    unit: 's',          dir: 'low',  benchmark: 6.20,  group: 'Speed' },
+  { id: 'sprint40',  name: 'Sprint Test (40m)',          unit: 's',          dir: 'low',  benchmark: 5.80,  group: 'Speed' },
+  { id: 'rsa',       name: 'Repeated Sprint Ability',    unit: 's (mean)',   dir: 'low',  benchmark: 6.50,  group: 'Speed' },
+  { id: 'cod',       name: 'Change of Direction (COD)',  unit: 's',         dir: 'low',  benchmark: 8.20,  group: 'Speed' },
+  { id: 'vo2max',    name: 'Aerobic Capacity (VO2max)',  unit: 'ml/kg/min',  dir: 'high', benchmark: 52,    group: 'Aerobic' },
+  { id: 'lactate',   name: 'Lactate Threshold',          unit: 'km/h @4mmol', dir: 'high', benchmark: 13.5, group: 'Aerobic' },
+  { id: 'maxhr',     name: 'Maximum HR Test',            unit: 'bpm',        dir: 'neutral', benchmark: null, group: 'Aerobic' },
+  { id: 'vt2',       name: 'Ventilatory Threshold (VT2)', unit: 'km/h',      dir: 'high', benchmark: 14.0,  group: 'Aerobic' },
+  { id: 'custom',    name: 'Custom Test',                unit: '',          dir: 'neutral', benchmark: null, group: 'Other' }
+];
+
+/* ---------------- VALD / screening systems ---------------- */
+var SCREENING_PROTOCOLS = [
+  { id: 'forcedecks_jh',  system: 'ForceDecks',  name: 'CMJ Jump Height',        unit: 'cm', dir: 'high', benchmark: 32 },
+  { id: 'forcedecks_asym', system: 'ForceDecks', name: 'CMJ L/R Asymmetry',      unit: '%',  dir: 'low',  benchmark: 10 },
+  { id: 'forceframe_str', system: 'ForceFrame',  name: 'Hip Add/Abd Strength',   unit: 'N',  dir: 'high', benchmark: 300 },
+  { id: 'forceframe_asym', system: 'ForceFrame', name: 'Hip L/R Asymmetry',      unit: '%',  dir: 'low',  benchmark: 10 },
+  { id: 'nordbord_force', system: 'NordBord',    name: 'Peak Hamstring Force',   unit: 'N',  dir: 'high', benchmark: 350 },
+  { id: 'nordbord_asym',  system: 'NordBord',    name: 'Hamstring L/R Imbalance', unit: '%', dir: 'low',  benchmark: 10 },
+  { id: 'dynamo_force',   system: 'Dynamo',      name: 'Peak Force (handheld)',  unit: 'N',  dir: 'high', benchmark: 280 },
+  { id: 'humantrak_rom',  system: 'HumanTrak',   name: 'Shoulder/Hip ROM',       unit: '°',  dir: 'high', benchmark: 150 }
+];
+var SCREENING_SYSTEMS = ['ForceDecks', 'ForceFrame', 'NordBord', 'Dynamo', 'HumanTrak'];
+
+/* ---------------- Body map regions ---------------- */
+var BODY_REGIONS = [
+  { id: 'neck', label: 'Neck', view: 'front', x: 100, y: 38 },
+  { id: 'l_shoulder', label: 'L Shoulder', view: 'front', x: 72, y: 62 },
+  { id: 'r_shoulder', label: 'R Shoulder', view: 'front', x: 128, y: 62 },
+  { id: 'upper_back', label: 'Upper Back', view: 'back', x: 100, y: 62 },
+  { id: 'lower_back', label: 'Lower Back', view: 'back', x: 100, y: 118 },
+  { id: 'l_hip', label: 'L Hip', view: 'front', x: 84, y: 148 },
+  { id: 'r_hip', label: 'R Hip', view: 'front', x: 116, y: 148 },
+  { id: 'groin', label: 'Groin', view: 'front', x: 100, y: 160 },
+  { id: 'l_quad', label: 'L Quadriceps', view: 'front', x: 84, y: 195 },
+  { id: 'r_quad', label: 'R Quadriceps', view: 'front', x: 116, y: 195 },
+  { id: 'l_hamstring', label: 'L Hamstring', view: 'back', x: 84, y: 195 },
+  { id: 'r_hamstring', label: 'R Hamstring', view: 'back', x: 116, y: 195 },
+  { id: 'l_knee', label: 'L Knee', view: 'front', x: 84, y: 235 },
+  { id: 'r_knee', label: 'R Knee', view: 'front', x: 116, y: 235 },
+  { id: 'l_calf', label: 'L Calf', view: 'back', x: 84, y: 270 },
+  { id: 'r_calf', label: 'R Calf', view: 'back', x: 116, y: 270 },
+  { id: 'l_achilles', label: 'L Achilles', view: 'back', x: 84, y: 305 },
+  { id: 'r_achilles', label: 'R Achilles', view: 'back', x: 116, y: 305 },
+  { id: 'l_ankle', label: 'L Ankle / Foot', view: 'front', x: 84, y: 320 },
+  { id: 'r_ankle', label: 'R Ankle / Foot', view: 'front', x: 116, y: 320 }
+];
+var BODY_STATUS_CYCLE = ['normal', 'monitor', 'modified', 'injured'];
+var BODY_STATUS_COLORS = { normal: '#18A558', monitor: '#FFC928', modified: '#FF8A28', injured: '#E63946' };
+var BODY_STATUS_LABELS = { normal: 'Normal', monitor: 'Monitor', modified: 'Modified', injured: 'Injured' };
+
 function refchSeed() {
   var referees = [
     { id: 'r1', name: 'Alex Martin', country: 'Spain', flag: '🇪🇸', category: 'Elite', refType: 'Referee', age: 38, status: 'Available' },
@@ -44,7 +104,17 @@ function refchSeed() {
     { id: 'r5', name: 'Emre Aydın', country: 'Turkey', flag: '🇹🇷', category: 'National', refType: 'Assistant Referee', age: 29, status: 'Available' },
     { id: 'r6', name: 'Tomasz Nowak', country: 'Poland', flag: '🇵🇱', category: 'Elite', refType: 'Referee', age: 33, status: 'Injured' }
   ];
-  referees.forEach(function (r, i) { r.color = AVATAR_COLORS[i % AVATAR_COLORS.length]; });
+  referees.forEach(function (r, i) {
+    r.color = AVATAR_COLORS[i % AVATAR_COLORS.length];
+    r.anthro = { height: null, weight: null, bodyFat: null };
+    r.bodyMap = {};
+  });
+  referees[0].anthro = { height: 181, weight: 76, bodyFat: 11.2 };
+  referees[2].anthro = { height: 168, weight: 58, bodyFat: 16.5 };
+  referees[3].anthro = { height: 179, weight: 79, bodyFat: 13.8 };
+  referees[3].bodyMap = { l_hamstring: 'monitor' };
+  referees[5].anthro = { height: 183, weight: 81, bodyFat: 12.9 };
+  referees[5].bodyMap = { r_hamstring: 'injured' };
 
   var organizations = [
     {
@@ -74,13 +144,36 @@ function refchSeed() {
     });
   });
 
-  return { referees: referees, organizations: organizations };
+  var fitnessResults = [
+    { id: 'fr1', refereeId: 'r1', protocolId: 'uefa20', date: '2026-03-02', value: 2080, notes: '' },
+    { id: 'fr2', refereeId: 'r1', protocolId: 'sprint40', date: '2026-03-02', value: 5.65, notes: '' },
+    { id: 'fr3', refereeId: 'r3', protocolId: 'yoyo_ir1', date: '2026-02-18', value: 2320, notes: '' },
+    { id: 'fr4', refereeId: 'r6', protocolId: 'rsa', date: '2026-01-20', value: 6.80, notes: 'Pre-injury baseline' }
+  ];
+
+  var screeningResults = [
+    { id: 'sr1', refereeId: 'r1', protocolId: 'forcedecks_jh', date: '2026-03-05', value: 34.2, notes: '' },
+    { id: 'sr2', refereeId: 'r1', protocolId: 'forcedecks_asym', date: '2026-03-05', value: 6.1, notes: '' },
+    { id: 'sr3', refereeId: 'r6', protocolId: 'nordbord_asym', date: '2026-02-10', value: 18.4, notes: 'Flagged — referred to medical' }
+  ];
+
+  return { referees: referees, organizations: organizations, fitnessResults: fitnessResults, screeningResults: screeningResults };
+}
+
+function refchMigrate(state) {
+  if (!state.fitnessResults) state.fitnessResults = [];
+  if (!state.screeningResults) state.screeningResults = [];
+  state.referees.forEach(function (r) {
+    if (!r.anthro) r.anthro = { height: null, weight: null, bodyFat: null };
+    if (!r.bodyMap) r.bodyMap = {};
+  });
+  return state;
 }
 
 function refchLoad() {
   try {
     var raw = localStorage.getItem(REFCH_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) return refchMigrate(JSON.parse(raw));
   } catch (e) {}
   var seeded = refchSeed();
   refchSaveAll(seeded);
@@ -173,4 +266,102 @@ function refchOrgsForReferee(refereeId) {
       var roles = o.members.filter(function (m) { return m.refereeId === refereeId; }).map(function (m) { return m.role; });
       return { org: o, roles: roles };
     });
+}
+
+/* ---------------- Fitness test protocols ---------------- */
+
+function refchProtocolById(id) {
+  return FITNESS_PROTOCOLS.filter(function (p) { return p.id === id; })[0];
+}
+
+function refchAddFitnessResult(data) {
+  var rec = {
+    id: refchUid('fr'),
+    refereeId: data.refereeId,
+    protocolId: data.protocolId,
+    date: data.date,
+    value: data.value,
+    notes: data.notes || ''
+  };
+  refchState.fitnessResults.push(rec);
+  refchSave();
+  return rec;
+}
+
+function refchFitnessResultsFor(refereeId) {
+  return refchState.fitnessResults
+    .filter(function (r) { return !refereeId || r.refereeId === refereeId; })
+    .sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+}
+
+function refchPreviousFitnessResult(refereeId, protocolId, beforeId) {
+  var list = refchState.fitnessResults
+    .filter(function (r) { return r.refereeId === refereeId && r.protocolId === protocolId && r.id !== beforeId; })
+    .sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+  return list[0] || null;
+}
+
+function refchPassFail(protocol, value) {
+  if (protocol.dir === 'neutral' || protocol.benchmark == null) return null;
+  if (protocol.dir === 'high') return value >= protocol.benchmark;
+  return value <= protocol.benchmark;
+}
+
+/* ---------------- Screening / VALD systems ---------------- */
+
+function refchScreeningProtocolById(id) {
+  return SCREENING_PROTOCOLS.filter(function (p) { return p.id === id; })[0];
+}
+
+function refchAddScreeningResult(data) {
+  var rec = {
+    id: refchUid('sr'),
+    refereeId: data.refereeId,
+    protocolId: data.protocolId,
+    date: data.date,
+    value: data.value,
+    notes: data.notes || ''
+  };
+  refchState.screeningResults.push(rec);
+  refchSave();
+  return rec;
+}
+
+function refchScreeningResultsFor(refereeId) {
+  return refchState.screeningResults
+    .filter(function (r) { return !refereeId || r.refereeId === refereeId; })
+    .sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+}
+
+/* ---------------- Anthropometrics ---------------- */
+
+function refchSetAnthro(refereeId, anthro) {
+  var r = refchRefereeById(refereeId);
+  if (!r) return;
+  r.anthro = anthro;
+  refchSave();
+}
+
+function refchBmi(anthro) {
+  if (!anthro || !anthro.height || !anthro.weight) return null;
+  var m = anthro.height / 100;
+  return anthro.weight / (m * m);
+}
+
+/* ---------------- Body map ---------------- */
+
+function refchSetBodyStatus(refereeId, regionId, status) {
+  var r = refchRefereeById(refereeId);
+  if (!r) return;
+  if (status === 'normal') {
+    delete r.bodyMap[regionId];
+  } else {
+    r.bodyMap[regionId] = status;
+  }
+  refchSave();
+}
+
+function refchNextBodyStatus(current) {
+  var idx = BODY_STATUS_CYCLE.indexOf(current || 'normal');
+  return BODY_STATUS_CYCLE[(idx + 1) % BODY_STATUS_CYCLE.length];
 }

@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Organizations &amp; Roles — Ref Central Hub</title>
+<title>Fitness Tests — Ref Central Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 <link rel="stylesheet" href="css/dashboard.css">
 <link rel="stylesheet" href="css/referees.css">
+<link rel="stylesheet" href="css/fitness.css">
 </head>
 <body class="app-body">
 
@@ -59,7 +60,7 @@
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="7.3"/><path d="M8.6 7.2l3.6 2.8-3.6 2.8z"/></svg></span>
         <span class="nav-text">On-Field Review</span>
       </a>
-      <a class="nav-item" href="fitness-tests.html">
+      <a class="nav-item active" href="fitness-tests.html">
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="11" r="6.3"/><path d="M10 4.7V3M8 3h4M10 7.7V11l2.6 1.6"/></svg></span>
         <span class="nav-text">Fitness Tests</span>
       </a>
@@ -115,7 +116,7 @@
 
     <div class="nav-group">
       <div class="nav-label">Admin</div>
-      <a class="nav-item active" href="organizations.html">
+      <a class="nav-item" href="organizations.html">
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="7" r="2.6"/><path d="M3 17c0-2.6 2.2-4.7 5-4.7s5 2.1 5 4.7"/><circle cx="15.2" cy="6" r="1.4"/><path d="M14 11.5c1.7.3 3 1.8 3 3.6"/></svg></span>
         <span class="nav-text">User Management</span>
       </a>
@@ -146,7 +147,7 @@
     </button>
     <div class="search-box">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input type="text" id="orgSearch" placeholder="Search organizations…">
+      <input type="text" id="ftSearch" placeholder="Search referees, matches, reports…">
     </div>
     <div class="topbar-spacer"></div>
     <div class="topbar-actions">
@@ -168,89 +169,83 @@
   <main class="content">
     <div class="page-head">
       <div>
-        <h1>Organizations &amp; Roles</h1>
-        <p class="page-sub">Manage organizations and decide which referee belongs to which organization, and in what role.</p>
+        <h1>Fitness Tests</h1>
+        <p class="page-sub">UEFA20, FIFA Fitness Test, ARIET, Yo-Yo, sprint, aerobic and custom protocols — one results log.</p>
       </div>
-      <button class="btn btn-primary" id="openAddOrg">
+      <button class="btn btn-primary" id="openAddResult">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-        Add Organization
+        Add Result
       </button>
     </div>
 
-    <div class="filter-row">
-      <div class="filter-count" id="orgCount"></div>
+    <div class="kpi-grid" id="ftKpis" style="grid-template-columns:repeat(4,1fr);"></div>
+
+    <div class="card card-pad" style="margin-bottom:16px;">
+      <div class="card-head">
+        <div class="card-title">Protocol Catalog</div>
+        <div class="card-subtitle" style="margin:0;">Benchmarks shown are indicative placeholders — configure your federation's official standards in Settings.</div>
+      </div>
+      <div class="protocol-grid" id="protocolGrid"></div>
     </div>
 
-    <div class="org-grid" id="orgGrid"></div>
+    <div class="card card-pad">
+      <div class="card-head">
+        <div class="card-title">Results Log</div>
+      </div>
+      <div class="filter-row" style="margin-bottom:14px;">
+        <select class="filter-select" id="filterRefFt"><option value="">All Referees</option></select>
+        <select class="filter-select" id="filterProtocol"><option value="">All Protocols</option></select>
+        <div class="filter-count" id="ftCount"></div>
+      </div>
+      <table class="mini-table" id="resultsTable">
+        <thead>
+          <tr><th>Referee</th><th>Protocol</th><th>Date</th><th>Result</th><th>Benchmark</th><th>Trend</th><th>Status</th></tr>
+        </thead>
+        <tbody id="resultsBody"></tbody>
+      </table>
+    </div>
   </main>
 </div>
 
-<!-- ===== Add Organization modal ===== -->
-<div class="modal-overlay" id="addOrgModal">
+<!-- ===== Add Result modal ===== -->
+<div class="modal-overlay" id="addResultModal">
   <div class="modal">
     <div class="modal-head">
       <div>
-        <h3>Add Organization</h3>
-        <p>Create a federation, association or competition body.</p>
+        <h3>Add Fitness Test Result</h3>
+        <p>Log a new protocol result for a referee.</p>
       </div>
       <button class="modal-close" data-close-modal><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
     <div class="modal-body">
-      <form id="addOrgForm">
+      <form id="addResultForm">
         <div class="form-grid">
           <div class="form-field full">
-            <label for="ogName">Organization name</label>
-            <input type="text" id="ogName" placeholder="e.g. Royal Belgian Football Association" required>
-          </div>
-          <div class="form-field">
-            <label for="ogCode">Short code</label>
-            <input type="text" id="ogCode" placeholder="e.g. RBFA" maxlength="6" required>
-          </div>
-          <div class="form-field">
-            <label for="ogCountry">Country / Region</label>
-            <input type="text" id="ogCountry" placeholder="e.g. Belgium" required>
+            <label for="arReferee">Referee</label>
+            <select id="arReferee"></select>
           </div>
           <div class="form-field full">
-            <label for="ogColor">Brand color</label>
-            <input type="color" id="ogColor" value="#1473E6" style="height:42px; padding:4px;">
+            <label for="arProtocol">Protocol</label>
+            <select id="arProtocol"></select>
+          </div>
+          <div class="form-field">
+            <label for="arDate">Test date</label>
+            <input type="date" id="arDate" required>
+          </div>
+          <div class="form-field">
+            <label for="arValue">Result <span id="arUnitLabel" style="color:var(--text-400); font-weight:600;"></span></label>
+            <input type="number" step="any" id="arValue" required>
+          </div>
+          <div class="form-field full">
+            <label for="arNotes">Notes (optional)</label>
+            <input type="text" id="arNotes" placeholder="Context, conditions, observations…">
           </div>
         </div>
-        <div class="form-hint">Once created, open the organization to add referees and assign their roles.</div>
       </form>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" data-close-modal>Cancel</button>
-      <button class="btn btn-primary" id="submitAddOrg">Create Organization</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== Organization detail / roster modal ===== -->
-<div class="modal-overlay" id="orgDetailModal">
-  <div class="modal" style="max-width:640px;">
-    <div class="modal-head">
-      <div>
-        <h3 id="odName">—</h3>
-        <p id="odMeta">—</p>
-      </div>
-      <button class="modal-close" data-close-modal><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div class="card-title" style="margin-bottom:10px;">Roster</div>
-      <table class="roster-table" id="odRosterTable">
-        <thead><tr><th>Referee</th><th>Role</th><th></th></tr></thead>
-        <tbody id="odRosterBody"></tbody>
-      </table>
-
-      <div class="card-title" style="margin-bottom:10px;">Add Member</div>
-      <div class="assign-row">
-        <select id="odRefSelect" class="filter-select"></select>
-        <select id="odRoleSelect" class="filter-select"></select>
-        <button class="btn btn-primary" id="odAssignBtn">Add</button>
-      </div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" data-close-modal>Close</button>
+      <button class="btn btn-primary" id="submitAddResult">Save Result</button>
     </div>
   </div>
 </div>
@@ -259,6 +254,6 @@
 
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
-<script src="js/organizations.js"></script>
+<script src="js/fitness-tests.js"></script>
 </body>
 </html>
