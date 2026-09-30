@@ -1,0 +1,113 @@
+/* ============================================================
+   Referees & Organizations — shared list/grid/filter styles
+   ============================================================ */
+
+.filter-select {
+  border: 1px solid var(--grey-200);
+  background: white;
+  color: var(--text-600);
+  font-size: 12.8px;
+  font-weight: 600;
+  font-family: var(--font);
+  padding: 9px 12px;
+  border-radius: 9px;
+}
+.filter-count {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--text-400);
+  font-weight: 600;
+  align-self: center;
+}
+.filter-row { align-items: center; }
+
+/* ---------------- Referee grid ---------------- */
+.referee-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+.referee-card {
+  background: white;
+  border: 1px solid var(--grey-100);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.referee-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-pop); }
+
+.referee-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.referee-card-top .avatar { width: 46px; height: 46px; font-size: 15px; }
+.referee-card-name { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+.referee-card-sub { font-size: 12px; color: var(--text-400); font-weight: 600; margin-top: 2px; }
+
+.referee-card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.tag-pill {
+  font-size: 10.8px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+  background: var(--grey-100); color: var(--text-600);
+}
+.tag-pill.cat { background: var(--blue-100); color: #0E5CB8; }
+
+.referee-card-orgs { border-top: 1px solid var(--grey-50); padding-top: 12px; display: flex; gap: 6px; flex-wrap: wrap; min-height: 26px; }
+.referee-card-orgs .empty-hint { font-size: 11.5px; color: var(--text-400); font-style: italic; }
+
+/* ---------------- Org assignment (inside referee modal) ---------------- */
+.org-assign-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.org-assign-row {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--grey-50);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.org-assign-row .org-badge {
+  width: 30px; height: 30px; border-radius: 8px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 800; font-size: 11px;
+}
+.org-assign-row .org-info { flex: 1; min-width: 0; }
+.org-assign-row .org-name { font-size: 13px; font-weight: 700; }
+.org-assign-row .org-roles { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 4px; }
+
+.assign-row { display: flex; gap: 8px; }
+.assign-row .filter-select { flex: 1; }
+
+/* ---------------- Organizations page ---------------- */
+.org-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+.org-card {
+  background: white;
+  border: 1px solid var(--grey-100);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.org-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-pop); }
+.org-card-top { display: flex; align-items: center; gap: 13px; margin-bottom: 14px; }
+.org-badge-lg {
+  width: 48px; height: 48px; border-radius: 12px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 800; font-size: 14px;
+}
+.org-card-name { font-size: 15.5px; font-weight: 800; }
+.org-card-sub { font-size: 12px; color: var(--text-400); font-weight: 600; margin-top: 2px; }
+.org-card-stats { display: flex; gap: 18px; border-top: 1px solid var(--grey-50); padding-top: 14px; }
+.org-card-stat .num { font-size: 18px; font-weight: 800; }
+.org-card-stat .lbl { font-size: 10.8px; color: var(--text-400); font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; margin-top: 2px; }
+
+/* ---------------- Org roster (detail modal) ---------------- */
+.roster-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+.roster-table th {
+  text-align: left; font-size: 10.8px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.3px; color: var(--text-400); padding: 0 8px 8px;
+  border-bottom: 1px solid var(--grey-100);
+}
+.roster-table td { padding: 9px 8px; font-size: 13px; border-bottom: 1px solid var(--grey-50); vertical-align: middle; }
+.roster-table tr:last-child td { border-bottom: none; }
+.roster-name { display: flex; align-items: center; gap: 8px; font-weight: 700; }

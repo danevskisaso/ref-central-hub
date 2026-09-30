@@ -40,7 +40,40 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ---------- Training Load Trend chart ---------- */
   var chartEl = document.getElementById('loadChart');
   if (chartEl) renderLoadChart(chartEl);
+
+  /* ---------- Modal close wiring (shared) ---------- */
+  document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closeModal(overlay.id);
+    });
+    overlay.querySelectorAll('[data-close-modal]').forEach(function (btn) {
+      btn.addEventListener('click', function () { closeModal(overlay.id); });
+    });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.open').forEach(function (m) { closeModal(m.id); });
+    }
+  });
 });
+
+/* ---------- Shared modal / toast helpers ---------- */
+function openModal(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.add('open');
+}
+function closeModal(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
+function showToast(message) {
+  var el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = message;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(function () { el.classList.remove('show'); }, 2600);
+}
 
 function renderLoadChart(container) {
   var labels = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'];
