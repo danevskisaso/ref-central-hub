@@ -258,6 +258,73 @@ function refchMessagesFor(filters) {
     .sort(function (a, b) { return a.sentAt < b.sentAt ? 1 : -1; });
 }
 
+/* ---------------- Documents ---------------- */
+
+var DOCUMENT_TYPES = [
+  { id: 'pdf',   label: 'PDF',           color: '#E63946', exts: ['pdf'] },
+  { id: 'jpeg',  label: 'Image (JPEG)',  color: '#00B8D9', exts: ['jpg', 'jpeg'] },
+  { id: 'excel', label: 'Excel',         color: '#18A558', exts: ['xls', 'xlsx', 'csv'] },
+  { id: 'word',  label: 'Word',          color: '#1473E6', exts: ['doc', 'docx'] }
+];
+
+var DOC_SHARE_TYPES = [{ id: 'library', label: 'General Library (everyone)' }].concat(AUDIENCE_TYPES);
+
+function refchDetectFileType(filename) {
+  var ext = (filename.split('.').pop() || '').toLowerCase();
+  var match = DOCUMENT_TYPES.filter(function (t) { return t.exts.indexOf(ext) !== -1; })[0];
+  return match ? match.id : null;
+}
+
+function refchDocTypeById(id) {
+  return DOCUMENT_TYPES.filter(function (t) { return t.id === id; })[0];
+}
+
+function refchFormatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function refchDocShareLabel(shareType, shareParams) {
+  if (shareType === 'library') return 'General Library — everyone';
+  return refchAudienceLabel(shareType, shareParams);
+}
+
+function refchDocShareCount(shareType, shareParams) {
+  if (shareType === 'library') return refchState.referees.length;
+  return refchResolveAudience(shareType, shareParams).length;
+}
+
+function refchAddDocument(meta) {
+  var doc = {
+    id: meta.id,
+    name: meta.name,
+    fileType: meta.fileType,
+    sizeBytes: meta.sizeBytes,
+    uploadedAt: new Date().toISOString(),
+    shareType: meta.shareType,
+    shareParams: meta.shareParams || {}
+  };
+  refchState.documents.push(doc);
+  refchSave();
+  return doc;
+}
+
+function refchRemoveDocumentMeta(id) {
+  refchState.documents = refchState.documents.filter(function (d) { return d.id !== id; });
+  refchSave();
+}
+
+function refchDocumentsFor(filters) {
+  filters = filters || {};
+  var q = (filters.query || '').toLowerCase();
+  return refchState.documents
+    .filter(function (d) { return !filters.fileType || d.fileType === filters.fileType; })
+    .filter(function (d) { return !filters.libraryOnly || d.shareType === 'library'; })
+    .filter(function (d) { return !q || d.name.toLowerCase().indexOf(q) !== -1; })
+    .sort(function (a, b) { return a.uploadedAt < b.uploadedAt ? 1 : -1; });
+}
+
 function refchSeed() {
   var referees = [
     { id: 'r1', name: 'Alex Martin', country: 'Spain', flag: '🇪🇸', category: 'Elite', refType: 'Referee', age: 38, status: 'Available' },
@@ -376,7 +443,7 @@ function refchSeed() {
     }
   ];
 
-  return { referees: referees, organizations: organizations, fitnessResults: fitnessResults, screeningResults: screeningResults, events: events, messages: messages };
+  return { referees: referees, organizations: organizations, fitnessResults: fitnessResults, screeningResults: screeningResults, events: events, messages: messages, documents: [] };
 }
 
 function refchMigrate(state) {
@@ -384,6 +451,7 @@ function refchMigrate(state) {
   if (!state.screeningResults) state.screeningResults = [];
   if (!state.events) state.events = [];
   if (!state.messages) state.messages = [];
+  if (!state.documents) state.documents = [];
   state.referees.forEach(function (r) {
     if (!r.anthro) r.anthro = { height: null, weight: null, bodyFat: null };
     if (!r.bodyMap) r.bodyMap = {};
