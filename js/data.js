@@ -325,14 +325,198 @@ function refchDocumentsFor(filters) {
     .sort(function (a, b) { return a.uploadedAt < b.uploadedAt ? 1 : -1; });
 }
 
+/* ---------------- Training Analysis ----------------
+   Implements the 11-metric evaluation model: monthly consistency,
+   weekly frequency, monthly load, weekly load balance, HR intensity
+   distribution, high-intensity exposure, recovery sessions, per-session
+   HR classification, duration/volume, distance, and training variety. */
+
+var EVAL_COLORS = {
+  'Excellent': '#18A558',
+  'Good': '#00B8D9',
+  'Needs Improvement': '#FFC928',
+  'Poor': '#E63946',
+  'High Risk': '#E63946',
+  'Possible overload risk': '#E63946',
+  'Possible excessive volume': '#E63946',
+  'Poor / High Risk': '#E63946'
+};
+
+function refchEvalColor(tier) { return EVAL_COLORS[tier] || '#97A5B3'; }
+
+var VARIETY_BUCKETS = [
+  { id: 'aerobic', label: 'Aerobic base / extensive endurance', min: 4, topics: ['Aerobic Capacity', 'Aerobic Power', 'Tempo Running', 'Low Intensity', 'Medium Intensity'] },
+  { id: 'hi_interval', label: 'High-intensity interval training', min: 4, topics: ['High Intensity', 'Interval Running'] },
+  { id: 'speed', label: 'Speed / repeated sprint / COD', min: 2, topics: ['Speed', 'Repeated Sprint Ability', 'Speed Endurance', 'Agility'] },
+  { id: 'recovery', label: 'Recovery / low-intensity', min: 3, topics: ['Recovery'] },
+  { id: 'strength', label: 'Strength / gym / injury prevention', min: 4, topics: ['Strength', 'Mobility', 'Injury Prevention', 'Coordination'] }
+];
+
+function refchWeekOfMonth(dateStr) {
+  var day = parseInt(dateStr.slice(8, 10), 10);
+  return Math.min(4, Math.ceil(day / 7));
+}
+
+function refchSessionIsHI(s, hrMax) {
+  var z45 = (s.zones.z4 || 0) + (s.zones.z5 || 0);
+  return (s.maxHR / hrMax) >= 0.90 || z45 >= 10 || (s.avgHR / hrMax) >= 0.80;
+}
+
+function refchSessionIsRecovery(s, hrMax) {
+  var z12 = (s.zones.z1 || 0) + (s.zones.z2 || 0);
+  var z345 = (s.zones.z3 || 0) + (s.zones.z4 || 0) + (s.zones.z5 || 0);
+  return (s.avgHR / hrMax) <= 0.70 && z12 > z345;
+}
+
+function refchSessionLabel(s, hrMax) {
+  if ((s.maxHR / hrMax) >= 0.90) return 'Maximal / Anaerobic Session';
+  var avgPct = s.avgHR / hrMax;
+  if (avgPct < 0.70) return 'Recovery Session';
+  if (avgPct < 0.80) return 'Aerobic Session';
+  if (avgPct < 0.85) return 'Tempo / Moderate Session';
+  return 'High-Intensity Session';
+}
+
+function refchTrainingSessionsFor(refereeId, monthStr) {
+  return refchState.trainingSessions
+    .filter(function (s) { return (!refereeId || s.refereeId === refereeId) && (!monthStr || s.date.slice(0, 7) === monthStr); })
+    .sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+}
+
+function refchAddTrainingSession(data) {
+  var s = {
+    id: refchUid('ts'),
+    refereeId: data.refereeId,
+    date: data.date,
+    category: data.category,
+    durationMin: data.durationMin || 0,
+    distanceKm: data.distanceKm || 0,
+    trainingLoad: data.trainingLoad || 0,
+    avgHR: data.avgHR || 0,
+    maxHR: data.maxHR || 0,
+    zones: data.zones || { z1: 0, z2: 0, z3: 0, z4: 0, z5: 0 }
+  };
+  refchState.trainingSessions.push(s);
+  refchSave();
+  return s;
+}
+
+function refchRemoveTrainingSession(id) {
+  refchState.trainingSessions = refchState.trainingSessions.filter(function (s) { return s.id !== id; });
+  refchSave();
+}
+
+function refchTrainingAnalysis(refereeId, monthStr) {
+  var ref = refchRefereeById(refereeId);
+  var hrMax = (ref && ref.hrMax) || 190;
+  var sessions = refchTrainingSessionsFor(refereeId, monthStr);
+  var m = {};
+
+  /* 1. Monthly Training Consistency */
+  var count = sessions.length;
+  var consistencyTier = count >= 24 ? 'Excellent' : count >= 21 ? 'Good' : count >= 17 ? 'Needs Improvement' : 'Poor';
+  m.consistency = { title: 'Monthly Training Consistency', value: count, tier: consistencyTier, detail: count + ' completed session' + (count === 1 ? '' : 's') + ' this month' };
+
+  /* 2. Weekly Training Frequency */
+  var weeksSet = {};
+  sessions.forEach(function (s) { weeksSet[refchWeekOfMonth(s.date)] = true; });
+  var activeWeeks = Object.keys(weeksSet).length;
+  var freqTier = activeWeeks >= 4 ? 'Excellent' : activeWeeks >= 3 ? 'Good' : activeWeeks >= 2 ? 'Needs Improvement' : 'Poor';
+  var freqDetailMap = { 4: 'Training completed in all 4 weeks', 3: 'Training completed in at least 3 weeks', 2: 'Training completed in only 2 weeks', 1: 'Training completed in 1 week only', 0: 'No training recorded this month' };
+  m.frequency = { title: 'Weekly Training Frequency', value: activeWeeks, tier: freqTier, detail: freqDetailMap[activeWeeks] || (activeWeeks + ' active weeks') };
+
+  /* 3. Monthly Training Load */
+  var totalLoad = sessions.reduce(function (sum, s) { return sum + s.trainingLoad; }, 0);
+  var loadTier = totalLoad > 2800 ? 'Possible overload risk' : totalLoad >= 1800 ? 'Excellent' : totalLoad >= 1400 ? 'Good' : totalLoad >= 900 ? 'Needs Improvement' : 'Poor';
+  m.load = { title: 'Monthly Training Load', value: totalLoad, tier: loadTier, detail: 'Total training load: ' + totalLoad.toLocaleString() + ' AU' };
+
+  /* 4. Weekly Load Balance */
+  var weekLoads = [1, 2, 3, 4].map(function (w) {
+    return sessions.filter(function (s) { return refchWeekOfMonth(s.date) === w; }).reduce(function (sum, s) { return sum + s.trainingLoad; }, 0);
+  });
+  var maxJump = 0, maxJumpWeek = null, maxJumpDir = 'increased';
+  for (var i = 1; i < 4; i++) {
+    if (weekLoads[i - 1] > 0) {
+      var pct = ((weekLoads[i] - weekLoads[i - 1]) / weekLoads[i - 1]) * 100;
+      if (Math.abs(pct) > Math.abs(maxJump)) { maxJump = pct; maxJumpWeek = i + 1; maxJumpDir = pct >= 0 ? 'increased' : 'decreased'; }
+    }
+  }
+  var absJump = Math.abs(maxJump);
+  var balanceTier = maxJumpWeek === null ? 'Needs Improvement' : absJump <= 25 ? 'Excellent' : absJump <= 35 ? 'Good' : absJump <= 50 ? 'Needs Improvement' : 'High Risk';
+  var balanceDetail = maxJumpWeek ? ('Week ' + maxJumpWeek + ' ' + maxJumpDir + ' by ' + Math.round(absJump) + '% compared with the previous week') : 'Not enough weekly data to compare';
+  m.balance = { title: 'Weekly Load Balance', value: Math.round(absJump), tier: balanceTier, detail: balanceDetail, weekLoads: weekLoads };
+
+  /* 5. Heart Rate Intensity Distribution */
+  var z1 = 0, z2 = 0, z3 = 0, z4 = 0, z5 = 0;
+  sessions.forEach(function (s) { z1 += s.zones.z1 || 0; z2 += s.zones.z2 || 0; z3 += s.zones.z3 || 0; z4 += s.zones.z4 || 0; z5 += s.zones.z5 || 0; });
+  var totalZoneMin = z1 + z2 + z3 + z4 + z5;
+  var pct12 = totalZoneMin ? ((z1 + z2) / totalZoneMin * 100) : 0;
+  var pct3 = totalZoneMin ? (z3 / totalZoneMin * 100) : 0;
+  var pct45 = totalZoneMin ? ((z4 + z5) / totalZoneMin * 100) : 0;
+  function inRange(v, lo, hi) { return v >= lo && v <= hi; }
+  var within12 = inRange(pct12, 55, 70), within3 = inRange(pct3, 15, 25), within45 = inRange(pct45, 10, 20);
+  var withinCount = [within12, within3, within45].filter(Boolean).length;
+  var distTier;
+  if (totalZoneMin === 0) distTier = 'Needs Improvement';
+  else if (withinCount === 3) distTier = 'Excellent';
+  else if (withinCount === 2) distTier = 'Good';
+  else if (pct45 > 25 || (pct12 > 75 && pct45 < 8)) distTier = 'High Risk';
+  else distTier = 'Needs Improvement';
+  m.distribution = { title: 'Heart Rate Intensity Distribution', value: null, tier: distTier, detail: 'Z1-Z2: ' + Math.round(pct12) + '%, Z3: ' + Math.round(pct3) + '%, Z4-Z5: ' + Math.round(pct45) + '%', pct12: pct12, pct3: pct3, pct45: pct45 };
+
+  /* 6. High-Intensity Training Exposure */
+  var hiCount = sessions.filter(function (s) { return refchSessionIsHI(s, hrMax); }).length;
+  var hiTier = hiCount >= 9 ? 'Possible overload risk' : hiCount >= 6 ? 'Excellent' : hiCount >= 4 ? 'Good' : hiCount >= 2 ? 'Needs Improvement' : 'Poor';
+  m.hiExposure = { title: 'High-Intensity Training Exposure', value: hiCount, tier: hiTier, detail: hiCount + ' high-intensity session' + (hiCount === 1 ? '' : 's') + ' completed this month' };
+
+  /* 7. Recovery / Low-Intensity Sessions */
+  var recCount = sessions.filter(function (s) { return refchSessionIsRecovery(s, hrMax); }).length;
+  var recTier = recCount === 0 ? 'Poor / High Risk' : recCount <= 2 ? 'Needs Improvement' : recCount === 3 ? 'Good' : 'Excellent';
+  m.recovery = { title: 'Recovery / Low-Intensity Sessions', value: recCount, tier: recTier, detail: recCount + ' low-intensity recovery session' + (recCount === 1 ? '' : 's') + ' completed' };
+
+  /* 8. Average HR and Max HR Evaluation (per-session classification) */
+  var sessionLabels = sessions.map(function (s) {
+    return { session: s, label: refchSessionLabel(s, hrMax), avgPct: Math.round((s.avgHR / hrMax) * 100) };
+  });
+  var latest = sessionLabels[sessionLabels.length - 1];
+  m.hrEval = {
+    title: 'Average HR and Max HR Evaluation', value: null, tier: null,
+    detail: latest ? ('Latest session — ' + latest.label + ': Average HR was ' + latest.avgPct + '% of HRmax') : 'No sessions logged yet',
+    sessionLabels: sessionLabels
+  };
+
+  /* 9. Duration and Volume */
+  var totalDuration = sessions.reduce(function (sum, s) { return sum + s.durationMin; }, 0);
+  var durTier = totalDuration >= 1200 ? 'Excellent' : totalDuration >= 900 ? 'Good' : totalDuration >= 600 ? 'Needs Improvement' : 'Poor';
+  m.duration = { title: 'Duration and Volume', value: totalDuration, tier: durTier, detail: 'Total duration: ' + totalDuration.toLocaleString() + ' minutes (' + (totalDuration / 60).toFixed(1) + ' hours)' };
+
+  /* 10. Distance / External Volume */
+  var totalDistance = Math.round(sessions.reduce(function (sum, s) { return sum + (s.distanceKm || 0); }, 0) * 10) / 10;
+  var distVolTier = totalDistance > 130 ? 'Possible excessive volume' : totalDistance >= 80 ? 'Excellent' : totalDistance >= 60 ? 'Good' : totalDistance >= 40 ? 'Needs Improvement' : 'Poor';
+  m.distanceVol = { title: 'Distance / External Volume', value: totalDistance, tier: distVolTier, detail: 'Monthly distance: ' + totalDistance + ' km' };
+
+  /* 11. Training Variety */
+  var bucketCounts = VARIETY_BUCKETS.map(function (b) {
+    var c = sessions.filter(function (s) { return b.topics.indexOf(s.category) !== -1; }).length;
+    return { bucket: b, count: c, met: c >= b.min };
+  });
+  var metCount = bucketCounts.filter(function (b) { return b.met; }).length;
+  var varietyTier = metCount === 5 ? 'Excellent' : metCount === 4 ? 'Good' : metCount === 3 ? 'Needs Improvement' : 'Poor';
+  var missing = bucketCounts.filter(function (b) { return !b.met; }).map(function (b) { return b.bucket.label; });
+  var varietyDetail = missing.length === 0 ? 'All training categories meet their monthly minimum' : 'Missing / below target: ' + missing.join(', ');
+  m.variety = { title: 'Training Variety', value: metCount, tier: varietyTier, detail: varietyDetail, buckets: bucketCounts };
+
+  return { hrMax: hrMax, sessionCount: count, metrics: m };
+}
+
 function refchSeed() {
   var referees = [
-    { id: 'r1', name: 'Alex Martin', country: 'Spain', flag: '🇪🇸', category: 'Elite', refType: 'Referee', age: 38, status: 'Available' },
-    { id: 'r2', name: 'Daniel König', country: 'Germany', flag: '🇩🇪', category: 'Elite', refType: 'Assistant Referee', age: 34, status: 'Match Assigned' },
-    { id: 'r3', name: 'Sara Rossi', country: 'Italy', flag: '🇮🇹', category: 'International', refType: 'Referee', age: 31, status: 'Available' },
-    { id: 'r4', name: 'Marko Jovanović', country: 'Serbia', flag: '🇷🇸', category: 'International', refType: 'Referee', age: 36, status: 'Modified Training' },
-    { id: 'r5', name: 'Emre Aydın', country: 'Turkey', flag: '🇹🇷', category: 'National', refType: 'Assistant Referee', age: 29, status: 'Available' },
-    { id: 'r6', name: 'Tomasz Nowak', country: 'Poland', flag: '🇵🇱', category: 'Elite', refType: 'Referee', age: 33, status: 'Injured' }
+    { id: 'r1', name: 'Alex Martin', country: 'Spain', flag: '🇪🇸', category: 'Elite', refType: 'Referee', age: 38, status: 'Available', hrMax: 190 },
+    { id: 'r2', name: 'Daniel König', country: 'Germany', flag: '🇩🇪', category: 'Elite', refType: 'Assistant Referee', age: 34, status: 'Match Assigned', hrMax: 188 },
+    { id: 'r3', name: 'Sara Rossi', country: 'Italy', flag: '🇮🇹', category: 'International', refType: 'Referee', age: 31, status: 'Available', hrMax: 192 },
+    { id: 'r4', name: 'Marko Jovanović', country: 'Serbia', flag: '🇷🇸', category: 'International', refType: 'Referee', age: 36, status: 'Modified Training', hrMax: 187 },
+    { id: 'r5', name: 'Emre Aydın', country: 'Turkey', flag: '🇹🇷', category: 'National', refType: 'Assistant Referee', age: 29, status: 'Available', hrMax: 194 },
+    { id: 'r6', name: 'Tomasz Nowak', country: 'Poland', flag: '🇵🇱', category: 'Elite', refType: 'Referee', age: 33, status: 'Injured', hrMax: 189 }
   ];
   referees.forEach(function (r, i) {
     r.color = AVATAR_COLORS[i % AVATAR_COLORS.length];
@@ -443,7 +627,28 @@ function refchSeed() {
     }
   ];
 
-  return { referees: referees, organizations: organizations, fitnessResults: fitnessResults, screeningResults: screeningResults, events: events, messages: messages, documents: [] };
+  function monthDate(day) {
+    var d = new Date(today.getFullYear(), today.getMonth(), Math.min(day, 28));
+    return d.toISOString().slice(0, 10);
+  }
+
+  var trainingSessions = [
+    { id: 'ts1', refereeId: 'r1', date: monthDate(2), category: 'Recovery', durationMin: 40, distanceKm: 5, trainingLoad: 120, avgHR: 118, maxHR: 135, zones: { z1: 30, z2: 10, z3: 0, z4: 0, z5: 0 } },
+    { id: 'ts2', refereeId: 'r1', date: monthDate(4), category: 'Aerobic Capacity', durationMin: 70, distanceKm: 12, trainingLoad: 180, avgHR: 143, maxHR: 160, zones: { z1: 10, z2: 40, z3: 20, z4: 0, z5: 0 } },
+    { id: 'ts3', refereeId: 'r1', date: monthDate(6), category: 'High Intensity', durationMin: 55, distanceKm: 8, trainingLoad: 210, avgHR: 158, maxHR: 178, zones: { z1: 5, z2: 10, z3: 15, z4: 15, z5: 10 } },
+    { id: 'ts4', refereeId: 'r1', date: monthDate(9), category: 'Strength', durationMin: 60, distanceKm: 0, trainingLoad: 150, avgHR: 122, maxHR: 140, zones: { z1: 35, z2: 20, z3: 5, z4: 0, z5: 0 } },
+    { id: 'ts5', refereeId: 'r1', date: monthDate(11), category: 'Recovery', durationMin: 35, distanceKm: 4, trainingLoad: 100, avgHR: 115, maxHR: 130, zones: { z1: 28, z2: 7, z3: 0, z4: 0, z5: 0 } },
+    { id: 'ts6', refereeId: 'r1', date: monthDate(13), category: 'Aerobic Capacity', durationMin: 75, distanceKm: 13, trainingLoad: 190, avgHR: 145, maxHR: 162, zones: { z1: 8, z2: 45, z3: 22, z4: 0, z5: 0 } },
+    { id: 'ts7', refereeId: 'r1', date: monthDate(16), category: 'High Intensity', durationMin: 50, distanceKm: 7, trainingLoad: 220, avgHR: 160, maxHR: 182, zones: { z1: 3, z2: 7, z3: 10, z4: 18, z5: 12 } },
+    { id: 'ts8', refereeId: 'r1', date: monthDate(18), category: 'Strength', durationMin: 55, distanceKm: 0, trainingLoad: 140, avgHR: 120, maxHR: 138, zones: { z1: 32, z2: 18, z3: 5, z4: 0, z5: 0 } },
+    { id: 'ts9', refereeId: 'r1', date: monthDate(20), category: 'Recovery', durationMin: 40, distanceKm: 5, trainingLoad: 110, avgHR: 116, maxHR: 132, zones: { z1: 31, z2: 9, z3: 0, z4: 0, z5: 0 } },
+    { id: 'ts10', refereeId: 'r1', date: monthDate(23), category: 'Medium Intensity', durationMin: 65, distanceKm: 11, trainingLoad: 175, avgHR: 155, maxHR: 170, zones: { z1: 5, z2: 15, z3: 35, z4: 10, z5: 0 } },
+    { id: 'ts11', refereeId: 'r1', date: monthDate(25), category: 'High Intensity', durationMin: 50, distanceKm: 6, trainingLoad: 215, avgHR: 159, maxHR: 180, zones: { z1: 2, z2: 8, z3: 10, z4: 18, z5: 12 } },
+    { id: 'ts12', refereeId: 'r1', date: monthDate(27), category: 'Strength', durationMin: 60, distanceKm: 0, trainingLoad: 145, avgHR: 121, maxHR: 139, zones: { z1: 34, z2: 21, z3: 5, z4: 0, z5: 0 } },
+    { id: 'ts13', refereeId: 'r1', date: monthDate(28), category: 'Aerobic Capacity', durationMin: 70, distanceKm: 13, trainingLoad: 185, avgHR: 146, maxHR: 163, zones: { z1: 9, z2: 43, z3: 18, z4: 0, z5: 0 } }
+  ];
+
+  return { referees: referees, organizations: organizations, fitnessResults: fitnessResults, screeningResults: screeningResults, events: events, messages: messages, documents: [], trainingSessions: trainingSessions };
 }
 
 function refchMigrate(state) {
@@ -452,9 +657,11 @@ function refchMigrate(state) {
   if (!state.events) state.events = [];
   if (!state.messages) state.messages = [];
   if (!state.documents) state.documents = [];
+  if (!state.trainingSessions) state.trainingSessions = [];
   state.referees.forEach(function (r) {
     if (!r.anthro) r.anthro = { height: null, weight: null, bodyFat: null };
     if (!r.bodyMap) r.bodyMap = {};
+    if (!r.hrMax) r.hrMax = 190;
   });
   return state;
 }
@@ -506,6 +713,9 @@ function refchAddReferee(data) {
     refType: data.refType,
     age: data.age || null,
     status: data.status || 'Available',
+    hrMax: data.hrMax || 190,
+    anthro: { height: null, weight: null, bodyFat: null },
+    bodyMap: {},
     color: AVATAR_COLORS[refchState.referees.length % AVATAR_COLORS.length]
   };
   refchState.referees.push(ref);
