@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Ref Central Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="app-body">
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark-sm">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="9" stroke="white" stroke-width="1.6"/>
+        <path d="M8 13l3 3 6-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="logo-wordmark-sm">
+      <span>REF CENTRAL HUB</span>
+    </div>
+    <button class="sidebar-collapse" id="sidebarToggle" aria-label="Collapse sidebar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-label">Overview</div>
+      <a class="nav-item active" href="dashboard.html">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="2.5" width="6.5" height="6.5" rx="1.5"/><rect x="11" y="2.5" width="6.5" height="6.5" rx="1.5"/><rect x="2.5" y="11" width="6.5" height="6.5" rx="1.5"/><rect x="11" y="11" width="6.5" height="6.5" rx="1.5"/></svg></span>
+        <span class="nav-text">Dashboard</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="6.5" r="2.7"/><path d="M2 17c0-2.8 2.2-5 5-5s5 2.2 5 5"/><circle cx="14.5" cy="7.5" r="2.1"/><path d="M12.8 12.3c2.3.2 4.2 2.1 4.2 4.7"/></svg></span>
+        <span class="nav-text">Referees</span>
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Performance</div>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 17l4.5-6 3.5 3.5L15.5 6l2.5 3"/></svg></span>
+        <span class="nav-text">Training</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="4" width="15" height="10" rx="1.5"/><circle cx="10" cy="9" r="2.6"/></svg></span>
+        <span class="nav-text">Match Analysis</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 15.5h15M2.5 15.5V4M2.5 12l4-4 3 3 5-6"/></svg></span>
+        <span class="nav-text">Training Analysis</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="7.3"/><path d="M8.6 7.2l3.6 2.8-3.6 2.8z"/></svg></span>
+        <span class="nav-text">On-Field Review</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="11" r="6.3"/><path d="M10 4.7V3M8 3h4M10 7.7V11l2.6 1.6"/></svg></span>
+        <span class="nav-text">Fitness Tests</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="7.3"/><circle cx="10" cy="10" r="4"/><circle cx="10" cy="10" r="0.8" fill="currentColor"/></svg></span>
+        <span class="nav-text">Screening</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 3a4.2 4.2 0 0 0-2.4 7.6c.5.4.8 1 .8 1.6v.3h3.2v-.3c0-.6.3-1.2.8-1.6A4.2 4.2 0 0 0 10 3z"/><path d="M8.4 15h3.2M9 17h2"/></svg></span>
+        <span class="nav-text">Recommendations</span>
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Planning</div>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="3.5" width="15" height="13.5" rx="1.5"/><path d="M2.5 7.5h15M6 2v3M14 2v3"/><path d="M7 11.2l1.8 1.8L13 9" /></svg></span>
+        <span class="nav-text">Training Programmes</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="3.5" width="15" height="13.5" rx="1.5"/><path d="M2.5 7.5h15M6 2v3M14 2v3"/></svg></span>
+        <span class="nav-text">Calendar</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 4.5h15v9h-9L4 16.5v-3H2.5z"/></svg></span>
+        <span class="nav-text">Communication</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 2.5h6l4 4v10.5H5z"/><path d="M11 2.5v4h4M7.5 11h5M7.5 13.5h5"/></svg></span>
+        <span class="nav-text">Documents</span>
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Intelligence</div>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="2.5" width="12" height="15" rx="1.5"/><path d="M7.5 7h5M7.5 10h5M7.5 13h3"/></svg></span>
+        <span class="nav-text">Reports</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 17V3M2.5 17h15"/><rect x="5" y="11" width="2.4" height="6" fill="currentColor" stroke="none"/><rect x="9" y="7" width="2.4" height="10" fill="currentColor" stroke="none"/><rect x="13" y="9.5" width="2.4" height="7.5" fill="currentColor" stroke="none"/></svg></span>
+        <span class="nav-text">Analytics</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 2.5l7.5 13.5h-15z"/><path d="M10 8v3.2M10 13.6h.01"/></svg></span>
+        <span class="nav-text">Signals &amp; Alerts</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 4.2c2.2-1 5.4-1 7.5.6 2.1-1.6 5.3-1.6 7.5-.6v10.6c-2.2-1-5.4-1-7.5.6-2.1-1.6-5.3-1.6-7.5-.6z"/><path d="M10 4.8v10.6"/></svg></span>
+        <span class="nav-text">Education</span>
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Admin</div>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="7" r="2.6"/><path d="M3 17c0-2.6 2.2-4.7 5-4.7s5 2.1 5 4.7"/><circle cx="15.2" cy="6" r="1.4"/><path d="M14 11.5c1.7.3 3 1.8 3 3.6"/></svg></span>
+        <span class="nav-text">User Management</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="2.6"/><path d="M10 3v1.8M10 15.2V17M17 10h-1.8M4.8 10H3M14.9 5.1l-1.3 1.3M6.4 13.6l-1.3 1.3M14.9 14.9l-1.3-1.3M6.4 6.4L5.1 5.1"/></svg></span>
+        <span class="nav-text">Settings</span>
+      </a>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="avatar avatar-sm" style="background:#1C5CAB">AM</div>
+      <div class="sidebar-user-info">
+        <div class="name">Alex Martin</div>
+        <div class="role">International Referee</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ================= MAIN ================= -->
+<div class="app-main">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <button class="icon-btn mobile-only" id="mobileNavToggle" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" placeholder="Search referees, matches, reports…">
+    </div>
+
+    <div class="topbar-spacer"></div>
+
+    <div class="topbar-actions">
+      <button class="icon-btn" title="Calendar">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+      </button>
+      <button class="icon-btn" title="Messages">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 5h18v11H8l-5 4z"/></svg>
+        <span class="dot-badge">3</span>
+      </button>
+      <button class="icon-btn" title="Notifications">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3a5 5 0 0 0-5 5v3.5c0 .8-.3 1.6-.9 2.2L5 15h14l-1.1-1.3a3 3 0 0 1-.9-2.2V8a5 5 0 0 0-5-5z"/><path d="M10 18a2 2 0 0 0 4 0"/></svg>
+        <span class="dot-badge critical">5</span>
+      </button>
+      <div class="topbar-divider"></div>
+      <button class="lang-select">EN <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+      <button class="icon-btn" title="Help">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.8 1c0 1.7-2.3 1.8-2.3 3.5"/><path d="M12 17h.01"/></svg>
+      </button>
+      <div class="topbar-divider"></div>
+      <div class="user-chip">
+        <div class="avatar avatar-sm" style="background:#1C5CAB">AM</div>
+        <div class="user-chip-info">
+          <div class="name">Alex Martin</div>
+          <div class="role">Refereeing Officer</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- Welcome + filters -->
+    <div class="page-head">
+      <div>
+        <h1>Welcome to Ref Central Hub</h1>
+        <p class="page-sub">Performance intelligence for modern refereeing.</p>
+      </div>
+      <button class="btn btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        New Report
+      </button>
+    </div>
+
+    <div class="filter-row">
+      <button class="filter-chip active">All Competitions</button>
+      <button class="filter-chip">Category: Elite</button>
+      <button class="filter-chip">Country: All</button>
+      <button class="filter-chip">Referee: All</button>
+      <button class="filter-chip">Season: 2025/26</button>
+      <button class="filter-chip">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+        Last 30 days
+      </button>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:var(--blue-100); color:var(--blue-600)">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="7" cy="6.5" r="2.7"/><path d="M2 17c0-2.8 2.2-5 5-5s5 2.2 5 5"/><circle cx="14.5" cy="7.5" r="2.1"/><path d="M12.8 12.3c2.3.2 4.2 2.1 4.2 4.7"/></svg>
+        </div>
+        <div class="kpi-value tabular">248</div>
+        <div class="kpi-label">Active Referees</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:var(--cyan-100); color:#0A8CA3">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2.5" y="4" width="15" height="10" rx="1.5"/><circle cx="10" cy="9" r="2.6"/></svg>
+        </div>
+        <div class="kpi-value tabular">1,428</div>
+        <div class="kpi-label">Matches Analysed</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:var(--green-100); color:var(--green-600)">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 17l4.5-6 3.5 3.5L15.5 6l2.5 3"/></svg>
+        </div>
+        <div class="kpi-value tabular">5,682</div>
+        <div class="kpi-label">Training Sessions</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:var(--blue-100); color:var(--blue-600)">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="11" r="6.3"/><path d="M10 4.7V3M8 3h4M10 7.7V11l2.6 1.6"/></svg>
+        </div>
+        <div class="kpi-value tabular">792</div>
+        <div class="kpi-label">Fitness Tests</div>
+      </div>
+      <div class="kpi-card alert">
+        <div class="kpi-icon" style="background:var(--yellow-100); color:#8A6400">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10 2.5l7.5 13.5h-15z"/><path d="M10 8v3.2M10 13.6h.01"/></svg>
+        </div>
+        <div class="kpi-value tabular">14</div>
+        <div class="kpi-label">Active Alerts</div>
+      </div>
+      <div class="kpi-card alert">
+        <div class="kpi-icon" style="background:var(--red-100); color:var(--red-600)">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/><path d="M7.5 7.5l5 5M12.5 7.5l-5 5"/></svg>
+        </div>
+        <div class="kpi-value tabular">6</div>
+        <div class="kpi-label">Injured / Modified</div>
+      </div>
+    </div>
+
+    <!-- Today's Matches / Alerts -->
+    <div class="grid-2col">
+      <div class="card card-pad">
+        <div class="card-head">
+          <div class="card-title">Today's Matches</div>
+          <a href="#" class="card-link">View calendar</a>
+        </div>
+        <div class="match-list">
+          <div class="match-row">
+            <div class="avatar" style="background:#1C5CAB">AM</div>
+            <div class="match-info">
+              <div class="match-name">Alex Martin <span class="flag">🇪🇸</span></div>
+              <div class="match-meta">UEFA Champions League · Referee</div>
+              <div class="match-fixture">Bayern München — Inter Milan</div>
+            </div>
+            <div class="match-when">
+              <div class="time tabular">20:00</div>
+              <div class="venue">Allianz Arena</div>
+            </div>
+          </div>
+          <div class="match-row">
+            <div class="avatar" style="background:#18A558">DK</div>
+            <div class="match-info">
+              <div class="match-name">Daniel König <span class="flag">🇩🇪</span></div>
+              <div class="match-meta">UEFA Europa League · Assistant Referee 1</div>
+              <div class="match-fixture">Porto — Fenerbahçe</div>
+            </div>
+            <div class="match-when">
+              <div class="time tabular">18:45</div>
+              <div class="venue">Estádio do Dragão</div>
+            </div>
+          </div>
+          <div class="match-row">
+            <div class="avatar" style="background:#00B8D9">SR</div>
+            <div class="match-info">
+              <div class="match-name">Sara Rossi <span class="flag">🇮🇹</span></div>
+              <div class="match-meta">UEFA Women's Champions League · Referee</div>
+              <div class="match-fixture">Barcelona — Lyon</div>
+            </div>
+            <div class="match-when">
+              <div class="time tabular">21:00</div>
+              <div class="venue">Camp Nou</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-pad">
+        <div class="card-head">
+          <div class="card-title">Recent Alerts</div>
+          <a href="#" class="card-link">View all (14)</a>
+        </div>
+        <div class="alert-list">
+          <div class="alert-row critical">
+            <span class="badge-dot-lg critical"></span>
+            <div class="alert-info">
+              <div class="alert-title">Excessive training load — Marko Jovanović</div>
+              <div class="alert-meta">Acute:Chronic ratio 1.62 · 2 hours ago</div>
+            </div>
+          </div>
+          <div class="alert-row warn">
+            <span class="badge-dot-lg warn"></span>
+            <div class="alert-info">
+              <div class="alert-title">Wellness decline — Emre Aydın</div>
+              <div class="alert-meta">Readiness dropped to 58/100 · 5 hours ago</div>
+            </div>
+          </div>
+          <div class="alert-row warn">
+            <span class="badge-dot-lg warn"></span>
+            <div class="alert-info">
+              <div class="alert-title">Fitness test expiring — Sara Rossi</div>
+              <div class="alert-meta">UEFA20 due in 6 days · Yesterday</div>
+            </div>
+          </div>
+          <div class="alert-row critical">
+            <span class="badge-dot-lg critical"></span>
+            <div class="alert-info">
+              <div class="alert-title">Injury reported — Tomasz Nowak</div>
+              <div class="alert-meta">Hamstring · Modified training · Yesterday</div>
+            </div>
+          </div>
+          <div class="alert-row neutral">
+            <span class="badge-dot-lg neutral"></span>
+            <div class="alert-info">
+              <div class="alert-title">Missing HR trace — Daniel König</div>
+              <div class="alert-meta">Session on Mar 14 · 2 days ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Training Load Trend -->
+    <div class="card card-pad">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Training Load Trend</div>
+          <div class="card-subtitle">Squad average · last 8 weeks</div>
+        </div>
+        <div class="seg-control">
+          <button class="seg-btn">7D</button>
+          <button class="seg-btn active">8W</button>
+          <button class="seg-btn">12W</button>
+        </div>
+      </div>
+      <div id="loadChart" class="chart-wrap"></div>
+    </div>
+
+    <!-- Today's training / Upcoming tests -->
+    <div class="grid-2col">
+      <div class="card card-pad">
+        <div class="card-head">
+          <div class="card-title">Today's Training</div>
+          <a href="#" class="card-link">Open training module</a>
+        </div>
+        <table class="mini-table">
+          <thead>
+            <tr><th>Referee</th><th>Session</th><th>Type</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-name"><span class="avatar avatar-xs" style="background:#1C5CAB">AM</span>Alex Martin</td>
+              <td>Speed Endurance</td>
+              <td><span class="tag tag-hi">HI</span></td>
+              <td><span class="badge badge-good"><span class="badge-dot"></span>Completed</span></td>
+            </tr>
+            <tr>
+              <td class="cell-name"><span class="avatar avatar-xs" style="background:#18A558">DK</span>Daniel König</td>
+              <td>Recovery Run</td>
+              <td><span class="tag tag-rec">Recovery</span></td>
+              <td><span class="badge badge-neutral"><span class="badge-dot"></span>Scheduled</span></td>
+            </tr>
+            <tr>
+              <td class="cell-name"><span class="avatar avatar-xs" style="background:#00B8D9">SR</span>Sara Rossi</td>
+              <td>Match Preparation</td>
+              <td><span class="tag tag-mi">MI</span></td>
+              <td><span class="badge badge-warn"><span class="badge-dot"></span>In Progress</span></td>
+            </tr>
+            <tr>
+              <td class="cell-name"><span class="avatar avatar-xs" style="background:#E63946">TN</span>Tomasz Nowak</td>
+              <td>Modified — Mobility</td>
+              <td><span class="tag tag-rec">Modified</span></td>
+              <td><span class="badge badge-critical"><span class="badge-dot"></span>Injury Protocol</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card card-pad">
+        <div class="card-head">
+          <div class="card-title">Upcoming Fitness Tests</div>
+          <a href="#" class="card-link">View schedule</a>
+        </div>
+        <div class="event-list">
+          <div class="event-row">
+            <div class="event-date"><div class="d">03</div><div class="m">OCT</div></div>
+            <div class="event-info">
+              <div class="event-title">UEFA20 — Elite Group A</div>
+              <div class="event-meta">12 referees · Marbella Performance Centre</div>
+            </div>
+            <span class="badge badge-info"><span class="badge-dot"></span>Scheduled</span>
+          </div>
+          <div class="event-row">
+            <div class="event-date"><div class="d">06</div><div class="m">OCT</div></div>
+            <div class="event-info">
+              <div class="event-title">Repeated Sprint Ability</div>
+              <div class="event-meta">Sara Rossi, Emre Aydın · Rome</div>
+            </div>
+            <span class="badge badge-info"><span class="badge-dot"></span>Scheduled</span>
+          </div>
+          <div class="event-row">
+            <div class="event-date"><div class="d">09</div><div class="m">OCT</div></div>
+            <div class="event-info">
+              <div class="event-title">Return-to-Test — T. Nowak</div>
+              <div class="event-meta">Hamstring clearance protocol</div>
+            </div>
+            <span class="badge badge-warn"><span class="badge-dot"></span>Conditional</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Match performance snapshot -->
+    <div class="card card-pad">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Latest Match Performance — Alex Martin</div>
+          <div class="card-subtitle">UEFA Champions League · Real Madrid vs Manchester City · Mar 18, 2026</div>
+        </div>
+        <a href="#" class="card-link">Open full analysis</a>
+      </div>
+      <div class="perf-grid">
+        <div class="perf-stat">
+          <div class="perf-value tabular">10.62<span>km</span></div>
+          <div class="perf-label">Total Distance</div>
+        </div>
+        <div class="perf-stat">
+          <div class="perf-value tabular">2.24<span>km</span></div>
+          <div class="perf-label">High-Speed Running</div>
+        </div>
+        <div class="perf-stat">
+          <div class="perf-value tabular">28.7<span>km/h</span></div>
+          <div class="perf-label">Max Speed</div>
+        </div>
+        <div class="perf-stat">
+          <div class="perf-value tabular">166<span>bpm</span></div>
+          <div class="perf-label">Average HR</div>
+        </div>
+        <div class="perf-stat">
+          <div class="perf-value tabular">94<span>%</span></div>
+          <div class="perf-label">HRmax</div>
+        </div>
+        <div class="perf-stat">
+          <div class="perf-value tabular">86<span>/100</span></div>
+          <div class="perf-label">Readiness</div>
+        </div>
+      </div>
+
+      <div class="compare-block">
+        <div class="compare-row">
+          <div class="compare-label">High-Speed Running vs season average</div>
+          <div class="compare-bars">
+            <div class="compare-bar-track"><div class="compare-bar current" style="width:74%"></div></div>
+            <div class="compare-bar-track"><div class="compare-bar average" style="width:66%"></div></div>
+          </div>
+          <div class="compare-legend">
+            <span><i style="background:var(--blue-600)"></i>Current 2.24 km</span>
+            <span><i style="background:var(--grey-400)"></i>Season avg 2.01 km</span>
+            <span class="compare-delta up">+11.4%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Events / Reports / Messages -->
+    <div class="grid-3col">
+      <div class="card card-pad">
+        <div class="card-head">
+          <div class="card-title">Upcoming Events</div>
+          <a href="#" class="card-link">Calendar</a>
+        </div>
+        <div class="simple-list">
+          <div class="simple-row"><span class="dot" style="background:var(--blue-600)"></span>CORE 60 Seminar <span class="simple-when">Oct 2</span></div>
+          <div class="simple-row"><span class="dot" style="background:var(--green-600)"></span>AR Women Course <span class="simple-when">Oct 4</span></div>
+          <div class="simple-row"><span class="dot" style="background:var(--cyan-500)"></span>Medical Review — T. Nowak <span class="simple-when">Oct 5</span></div>
+          <div class="simple-row"><span class="dot" style="background:var(--yellow-500)"></span>Match Assignment Deadline <span class="simple-when">Oct 7</span></div>
+        </div>
+      </div>
+
+      <div class="card card-pad">
+        <div class="card-head">
+          <div class="card-title">Reports Awaiting Review</div>
+          <a href="#" class="card-link">Reports</a>
+        </div>
+        <div class="simple-list">
+          <div class="simple-row"><span class="dot" style="background:var(--blue-600)"></span>Matchday Report — S. Rossi <span class="simple-when">New</span></div>
+          <div class="simple-row"><span class="dot" style="background:var(--blue-600)"></span>Training Compliance Q3 <span class="simple-when">New</span></div>
+          <div class="simple-row"><span class="dot" style="background:var(--grey-400)"></span>Screening Report — E. Aydın <span class="simple-when">2d</span></div>
+        </div>
+      </div>
+
+      <div class="card card-pad">
+        <div class="card-head">
+          <div class="card-title">Messages</div>
+          <a href="#" class="card-link">Open inbox</a>
+        </div>
+        <div class="simple-list">
+          <div class="simple-row"><span class="avatar avatar-xs" style="background:#18A558">FC</span>Fitness Coaches Group <span class="simple-when">4m</span></div>
+          <div class="simple-row"><span class="avatar avatar-xs" style="background:#1C5CAB">MT</span>Medical Team <span class="simple-when">1h</span></div>
+          <div class="simple-row"><span class="avatar avatar-xs" style="background:#00B8D9">RO</span>Refereeing Officers <span class="simple-when">3h</span></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

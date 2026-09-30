@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ref Central Hub — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  html, body { height: 100%; }
+  body { overflow: hidden; }
+
+  .login-screen {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    height: 100vh;
+    min-height: 640px;
+  }
+
+  /* ---------------- Left panel ---------------- */
+  .login-visual {
+    position: relative;
+    background:
+      radial-gradient(ellipse 900px 600px at 15% -10%, rgba(20,115,230,0.35), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 100%, rgba(0,184,217,0.22), transparent 55%),
+      linear-gradient(160deg, #051323 0%, var(--navy-900) 45%, #0A2036 100%);
+    color: var(--white);
+    padding: 56px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .pitch-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.16;
+  }
+
+  .trace-svg {
+    position: absolute;
+    left: -5%;
+    bottom: -6%;
+    width: 110%;
+    opacity: 0.5;
+  }
+
+  .login-visual-top {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-mark {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(145deg, var(--blue-600), var(--cyan-500));
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 18px -6px rgba(0,184,217,0.6);
+  }
+  .logo-wordmark {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 2.4px;
+    line-height: 1.15;
+  }
+  .logo-wordmark span { display: block; }
+  .logo-wordmark .sub { color: rgba(255,255,255,0.55); font-weight: 600; letter-spacing: 3px; font-size: 10.5px; }
+
+  .login-visual-mid {
+    position: relative;
+    z-index: 2;
+    max-width: 480px;
+  }
+  .login-visual-mid .eyebrow {
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--cyan-500);
+    margin-bottom: 18px;
+  }
+  .login-visual-mid h1 {
+    font-size: 42px;
+    line-height: 1.12;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin: 0 0 18px;
+  }
+  .login-visual-mid p {
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.68);
+    margin: 0 0 6px;
+  }
+  .login-visual-mid .tagline {
+    margin-top: 22px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .stat-row {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    gap: 36px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+  }
+  .stat-row .stat .num {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+  .stat-row .stat .lbl {
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    margin-top: 2px;
+  }
+
+  /* ---------------- Right panel ---------------- */
+  .login-form-side {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--white);
+    padding: 40px;
+  }
+  .login-form-wrap { width: 100%; max-width: 360px; }
+  .login-form-wrap h2 {
+    font-size: 26px;
+    font-weight: 800;
+    margin: 0 0 6px;
+    letter-spacing: -0.3px;
+  }
+  .login-form-wrap .lead {
+    font-size: 14px;
+    color: var(--text-400);
+    margin: 0 0 32px;
+  }
+
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-600);
+    margin-bottom: 7px;
+    letter-spacing: 0.2px;
+  }
+  .field input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--grey-200);
+    font-size: 14.5px;
+    font-family: var(--font);
+    color: var(--text-900);
+    background: var(--grey-50);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--blue-600);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(20,115,230,0.12);
+  }
+
+  .field-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 26px;
+  }
+  .remember { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-600); font-weight: 500; }
+  .remember input { accent-color: var(--blue-600); width: 15px; height: 15px; }
+  .forgot { font-size: 13px; font-weight: 600; color: var(--blue-600); }
+  .forgot:hover { text-decoration: underline; }
+
+  .divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 26px 0;
+    color: var(--text-400); font-size: 12px; font-weight: 600;
+  }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--grey-200); }
+
+  .sso-row { display: flex; gap: 10px; }
+  .sso-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--grey-200);
+    background: var(--white);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-600);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .sso-btn:hover { border-color: var(--grey-400); }
+
+  .footnote {
+    margin-top: 32px;
+    font-size: 12px;
+    color: var(--text-400);
+    text-align: center;
+  }
+
+  .error-msg {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: var(--red-100);
+    color: #B32330;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 18px;
+  }
+  .error-msg.show { display: flex; }
+
+  @media (max-width: 920px) {
+    .login-screen { grid-template-columns: 1fr; }
+    .login-visual { display: none; }
+    body { overflow: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="login-screen">
+
+  <!-- LEFT: brand / visual -->
+  <div class="login-visual">
+    <svg class="pitch-svg" viewBox="0 0 800 900" preserveAspectRatio="xMidYMid slice">
+      <circle cx="650" cy="120" r="140" fill="none" stroke="white" stroke-width="1.5"/>
+      <rect x="-40" y="600" width="420" height="260" fill="none" stroke="white" stroke-width="1.5"/>
+      <rect x="-40" y="660" width="180" height="140" fill="none" stroke="white" stroke-width="1.5"/>
+      <circle cx="220" cy="730" r="3" fill="white"/>
+      <line x1="0" y1="450" x2="800" y2="450" stroke="white" stroke-width="1.5"/>
+      <circle cx="400" cy="450" r="90" fill="none" stroke="white" stroke-width="1.5"/>
+    </svg>
+    <svg class="trace-svg" viewBox="0 0 600 160" preserveAspectRatio="none">
+      <polyline points="0,110 40,110 60,60 80,140 100,110 160,110 180,40 200,150 220,110 600,110"
+        fill="none" stroke="#00B8D9" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    </svg>
+
+    <div class="login-visual-top">
+      <div class="logo-mark">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="9" stroke="white" stroke-width="1.6"/>
+          <path d="M12 3v18M3 12h18" stroke="white" stroke-width="1.2" opacity="0.5"/>
+          <path d="M8 13l3 3 6-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="logo-wordmark">
+        <span>REF CENTRAL HUB</span>
+        <span class="sub">Performance Ecosystem</span>
+      </div>
+    </div>
+
+    <div class="login-visual-mid">
+      <div class="eyebrow">Elite Referee Performance Platform</div>
+      <h1>The central platform for referee performance.</h1>
+      <p>Training, match analysis, fitness testing, and communication — one connected ecosystem for referees, coaches and refereeing officers.</p>
+      <div class="tagline">Train. Analyse. Perform.</div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="num tabular">248</div>
+        <div class="lbl">ACTIVE REFEREES</div>
+      </div>
+      <div class="stat">
+        <div class="num tabular">1,428</div>
+        <div class="lbl">MATCHES ANALYSED</div>
+      </div>
+      <div class="stat">
+        <div class="num tabular">5,682</div>
+        <div class="lbl">TRAINING SESSIONS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: form -->
+  <div class="login-form-side">
+    <div class="login-form-wrap">
+      <h2>Welcome back</h2>
+      <p class="lead">Sign in to continue to your performance hub.</p>
+
+      <div class="error-msg" id="errorMsg">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#B32330" stroke-width="2"/><path d="M12 8v5M12 16h.01" stroke="#B32330" stroke-width="2" stroke-linecap="round"/></svg>
+        Invalid email or password. Please try again.
+      </div>
+
+      <form id="loginForm">
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="name@federation.org" value="a.martin@refcentralhub.com" required>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••••" value="••••••••••" required>
+        </div>
+        <div class="field-row">
+          <label class="remember"><input type="checkbox" checked> Remember me</label>
+          <a href="#" class="forgot">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+      </form>
+
+      <div class="divider">OR CONTINUE WITH</div>
+      <div class="sso-row">
+        <button class="sso-btn">Federation SSO</button>
+        <button class="sso-btn">UEFA ID</button>
+      </div>
+
+      <div class="footnote">Protected by role-based access &amp; two-factor authentication.<br>© 2026 Ref Central Hub. All rights reserved.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    window.location.href = 'dashboard.html';
+  });
+</script>
+</body>
+</html>
