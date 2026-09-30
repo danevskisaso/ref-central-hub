@@ -185,7 +185,8 @@ button { font-family: inherit; cursor: pointer; }
   letter-spacing: 0.2px;
 }
 .form-field input,
-.form-field select {
+.form-field select,
+.form-field textarea {
   width: 100%;
   padding: 11px 13px;
   border-radius: var(--radius-sm);
@@ -195,9 +196,11 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--text-900);
   background: var(--grey-50);
   transition: border-color .15s ease, background .15s ease;
+  resize: vertical;
 }
 .form-field input:focus,
-.form-field select:focus {
+.form-field select:focus,
+.form-field textarea:focus {
   outline: none;
   border-color: var(--blue-600);
   background: var(--white);

@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Referees — Ref Central Hub</title>
+<title>Communication — Ref Central Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 <link rel="stylesheet" href="css/dashboard.css">
 <link rel="stylesheet" href="css/referees.css">
+<link rel="stylesheet" href="css/fitness.css">
+<link rel="stylesheet" href="css/communication.css">
 </head>
 <body class="app-body">
 
@@ -35,7 +37,7 @@
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="2.5" width="6.5" height="6.5" rx="1.5"/><rect x="11" y="2.5" width="6.5" height="6.5" rx="1.5"/><rect x="2.5" y="11" width="6.5" height="6.5" rx="1.5"/><rect x="11" y="11" width="6.5" height="6.5" rx="1.5"/></svg></span>
         <span class="nav-text">Dashboard</span>
       </a>
-      <a class="nav-item active" href="referees.html">
+      <a class="nav-item" href="referees.html">
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="6.5" r="2.7"/><path d="M2 17c0-2.8 2.2-5 5-5s5 2.2 5 5"/><circle cx="14.5" cy="7.5" r="2.1"/><path d="M12.8 12.3c2.3.2 4.2 2.1 4.2 4.7"/></svg></span>
         <span class="nav-text">Referees</span>
       </a>
@@ -83,7 +85,7 @@
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="3.5" width="15" height="13.5" rx="1.5"/><path d="M2.5 7.5h15M6 2v3M14 2v3"/></svg></span>
         <span class="nav-text">Calendar</span>
       </a>
-      <a class="nav-item" href="communication.html">
+      <a class="nav-item active" href="communication.html">
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 4.5h15v9h-9L4 16.5v-3H2.5z"/></svg></span>
         <span class="nav-text">Communication</span>
       </a>
@@ -146,7 +148,7 @@
     </button>
     <div class="search-box">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input type="text" id="refSearch" placeholder="Search referees, matches, reports…">
+      <input type="text" placeholder="Search referees, matches, reports…">
     </div>
     <div class="topbar-spacer"></div>
     <div class="topbar-actions">
@@ -168,117 +170,106 @@
   <main class="content">
     <div class="page-head">
       <div>
-        <h1>Referee Database</h1>
-        <p class="page-sub">Search, filter and manage every referee in your ecosystem.</p>
+        <h1>Communication</h1>
+        <p class="page-sub">Message all referees, a whole organization, a specific role, or one person — with a full send log.</p>
       </div>
-      <button class="btn btn-primary" id="openAddReferee">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-        Add Referee
-      </button>
     </div>
 
-    <div class="filter-row">
-      <select class="filter-select" id="filterCategory">
-        <option value="">All Categories</option>
-      </select>
-      <select class="filter-select" id="filterType">
-        <option value="">Referee / Assistant</option>
-      </select>
-      <select class="filter-select" id="filterStatus">
-        <option value="">All Statuses</option>
-      </select>
-      <div class="filter-count" id="filterCount"></div>
-    </div>
+    <div class="kpi-grid" id="commKpis" style="grid-template-columns:repeat(4,1fr);"></div>
 
-    <div class="referee-grid" id="refereeGrid"></div>
-  </main>
-</div>
-
-<!-- ===== Add Referee modal ===== -->
-<div class="modal-overlay" id="addRefereeModal">
-  <div class="modal">
-    <div class="modal-head">
-      <div>
-        <h3>Add Referee</h3>
-        <p>Create a new referee profile in the database.</p>
-      </div>
-      <button class="modal-close" data-close-modal><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <form id="addRefereeForm">
-        <div class="form-grid">
-          <div class="form-field full">
-            <label for="rfName">Full name</label>
-            <input type="text" id="rfName" placeholder="e.g. Julia Berg" required>
-          </div>
-          <div class="form-field">
-            <label for="rfCountry">Country</label>
-            <input type="text" id="rfCountry" placeholder="e.g. Netherlands" required>
-          </div>
-          <div class="form-field">
-            <label for="rfFlag">Flag emoji</label>
-            <input type="text" id="rfFlag" placeholder="🇳🇱" maxlength="4">
-          </div>
-          <div class="form-field">
-            <label for="rfCategory">Category</label>
-            <select id="rfCategory"></select>
-          </div>
-          <div class="form-field">
-            <label for="rfType">Role on pitch</label>
-            <select id="rfType">
-              <option>Referee</option>
-              <option>Assistant Referee</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label for="rfAge">Age</label>
-            <input type="number" id="rfAge" min="18" max="60" placeholder="34">
-          </div>
-          <div class="form-field">
-            <label for="rfStatus">Status</label>
-            <select id="rfStatus"></select>
-          </div>
+    <div class="comm-layout">
+      <!-- Outgoing compose -->
+      <div class="card card-pad">
+        <div class="card-head">
+          <div class="card-title">Send a Message</div>
+          <div class="card-subtitle" style="margin:0;">From you, to referees / organizations / roles.</div>
         </div>
-        <div class="form-hint">Once created, open the referee's card to assign them to an organization and role.</div>
-      </form>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" data-close-modal>Cancel</button>
-      <button class="btn btn-primary" id="submitAddReferee">Create Referee</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== Referee detail / org assignment modal ===== -->
-<div class="modal-overlay" id="refDetailModal">
-  <div class="modal">
-    <div class="modal-head">
-      <div>
-        <h3 id="rdName">—</h3>
-        <p id="rdMeta">—</p>
+        <form id="composeForm">
+          <div class="form-field">
+            <label for="audienceType">Send to</label>
+            <select id="audienceType"></select>
+          </div>
+          <div class="form-field" id="audienceOrgWrap" style="display:none;">
+            <label for="audienceOrg">Organization</label>
+            <select id="audienceOrg"></select>
+          </div>
+          <div class="form-field" id="audienceRoleWrap" style="display:none;">
+            <label for="audienceRole">Role</label>
+            <select id="audienceRole"></select>
+          </div>
+          <div class="form-field" id="audienceRefWrap" style="display:none;">
+            <label for="audienceRef">Referee</label>
+            <select id="audienceRef"></select>
+          </div>
+          <div class="audience-preview" id="audiencePreview"></div>
+          <div class="form-field">
+            <label for="composeSubject">Subject</label>
+            <input type="text" id="composeSubject" placeholder="e.g. Updated fitness test window" required>
+          </div>
+          <div class="form-field">
+            <label for="composeBody">Message</label>
+            <textarea id="composeBody" rows="4" placeholder="Write your message…" required></textarea>
+          </div>
+        </form>
+        <button class="btn btn-primary btn-block" id="submitCompose">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          Send Message
+        </button>
       </div>
-      <button class="modal-close" data-close-modal><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div class="card-title" style="margin-bottom:10px;">Organizations &amp; Roles</div>
-      <div id="rdOrgList" class="org-assign-list"></div>
 
-      <div class="assign-row">
-        <select id="rdOrgSelect" class="filter-select"></select>
-        <select id="rdRoleSelect" class="filter-select"></select>
-        <button class="btn btn-primary" id="rdAssignBtn">Assign</button>
+      <!-- Incoming simulation -->
+      <div class="card card-pad">
+        <div class="card-head">
+          <div class="card-title">Messages From Referees</div>
+          <div class="card-subtitle" style="margin:0;">Referees, assistant referees and coaches can message you back.</div>
+        </div>
+        <form id="incomingForm">
+          <div class="form-field">
+            <label for="incomingFrom">From</label>
+            <select id="incomingFrom"></select>
+          </div>
+          <div class="form-field">
+            <label for="incomingSubject">Subject</label>
+            <input type="text" id="incomingSubject" placeholder="e.g. Question about training load" required>
+          </div>
+          <div class="form-field">
+            <label for="incomingBody">Message</label>
+            <textarea id="incomingBody" rows="4" placeholder="Write the incoming message…" required></textarea>
+          </div>
+        </form>
+        <button class="btn btn-ghost btn-block" id="submitIncoming">Log Incoming Message</button>
+        <div class="form-hint">This simulates a referee sending you a message — useful for demoing the two-way inbox without a live backend.</div>
       </div>
     </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" data-close-modal>Close</button>
+
+    <!-- Tracking log -->
+    <div class="card card-pad" style="margin-top:16px;">
+      <div class="card-head">
+        <div class="card-title">Message Log</div>
+      </div>
+      <div class="filter-row" style="margin-bottom:14px;">
+        <select class="filter-select" id="filterDirection">
+          <option value="">All Directions</option>
+          <option value="outgoing">Sent</option>
+          <option value="incoming">Received</option>
+        </select>
+        <select class="filter-select" id="filterRefMsg"><option value="">All Referees</option></select>
+        <div class="filter-count" id="msgCount"></div>
+      </div>
+      <table class="mini-table">
+        <thead>
+          <tr><th>Direction</th><th>From / To</th><th>Subject</th><th>Recipients</th><th>Sent At</th></tr>
+        </thead>
+        <tbody id="msgLogBody"></tbody>
+      </table>
     </div>
-  </div>
+  </main>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
-<script src="js/referees.js"></script>
+<script src="js/communication.js"></script>
 </body>
 </html>

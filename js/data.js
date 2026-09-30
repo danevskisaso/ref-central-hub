@@ -156,6 +156,108 @@ function refchEventsFor(filters) {
     .sort(function (a, b) { return a.date === b.date ? (a.time || '').localeCompare(b.time || '') : (a.date < b.date ? -1 : 1); });
 }
 
+/* ---------------- Communication ---------------- */
+
+var ME = { id: 'staff_me', name: 'Alex Martin', role: 'Refereeing Officer' };
+
+var AUDIENCE_TYPES = [
+  { id: 'all_referees',   label: 'All Referees' },
+  { id: 'all_assistants', label: 'All Assistant Referees' },
+  { id: 'organization',   label: 'Everyone in an Organization' },
+  { id: 'org_role',       label: 'A Role within an Organization' },
+  { id: 'individual',     label: 'One Referee' }
+];
+
+function refchAudienceLabel(audienceType, params) {
+  if (audienceType === 'all_referees') return 'All Referees';
+  if (audienceType === 'all_assistants') return 'All Assistant Referees';
+  if (audienceType === 'organization') {
+    var org = refchState.organizations.filter(function (o) { return o.id === params.orgId; })[0];
+    return org ? 'All of ' + org.name : 'Organization';
+  }
+  if (audienceType === 'org_role') {
+    var org2 = refchState.organizations.filter(function (o) { return o.id === params.orgId; })[0];
+    return (org2 ? org2.name : 'Organization') + ' — ' + refchRoleLabel(params.role);
+  }
+  if (audienceType === 'individual') {
+    var r = refchRefereeById(params.refereeId);
+    return r ? r.name : 'Referee';
+  }
+  return 'Recipients';
+}
+
+function refchResolveAudience(audienceType, params) {
+  if (audienceType === 'all_referees') {
+    return refchState.referees.filter(function (r) { return r.refType === 'Referee'; });
+  }
+  if (audienceType === 'all_assistants') {
+    return refchState.referees.filter(function (r) { return r.refType === 'Assistant Referee'; });
+  }
+  if (audienceType === 'organization') {
+    var org = refchState.organizations.filter(function (o) { return o.id === params.orgId; })[0];
+    if (!org) return [];
+    var ids = Array.from(new Set(org.members.map(function (m) { return m.refereeId; })));
+    return ids.map(refchRefereeById).filter(Boolean);
+  }
+  if (audienceType === 'org_role') {
+    var org2 = refchState.organizations.filter(function (o) { return o.id === params.orgId; })[0];
+    if (!org2) return [];
+    var ids2 = org2.members.filter(function (m) { return m.role === params.role; }).map(function (m) { return m.refereeId; });
+    return Array.from(new Set(ids2)).map(refchRefereeById).filter(Boolean);
+  }
+  if (audienceType === 'individual') {
+    var r = refchRefereeById(params.refereeId);
+    return r ? [r] : [];
+  }
+  return [];
+}
+
+function refchSendMessage(data) {
+  var recipients = refchResolveAudience(data.audienceType, data.params);
+  var msg = {
+    id: refchUid('msg'),
+    direction: 'outgoing',
+    senderId: null,
+    audienceType: data.audienceType,
+    audienceLabel: refchAudienceLabel(data.audienceType, data.params),
+    recipientIds: recipients.map(function (r) { return r.id; }),
+    subject: data.subject,
+    body: data.body,
+    sentAt: new Date().toISOString()
+  };
+  refchState.messages.push(msg);
+  refchSave();
+  return msg;
+}
+
+function refchReceiveMessage(data) {
+  var msg = {
+    id: refchUid('msg'),
+    direction: 'incoming',
+    senderId: data.refereeId,
+    audienceType: null,
+    audienceLabel: 'You (' + ME.role + ')',
+    recipientIds: [],
+    subject: data.subject,
+    body: data.body,
+    sentAt: new Date().toISOString()
+  };
+  refchState.messages.push(msg);
+  refchSave();
+  return msg;
+}
+
+function refchMessagesFor(filters) {
+  filters = filters || {};
+  return refchState.messages
+    .filter(function (m) { return !filters.direction || m.direction === filters.direction; })
+    .filter(function (m) {
+      if (!filters.refereeId) return true;
+      return m.senderId === filters.refereeId || m.recipientIds.indexOf(filters.refereeId) !== -1;
+    })
+    .sort(function (a, b) { return a.sentAt < b.sentAt ? 1 : -1; });
+}
+
 function refchSeed() {
   var referees = [
     { id: 'r1', name: 'Alex Martin', country: 'Spain', flag: '🇪🇸', category: 'Elite', refType: 'Referee', age: 38, status: 'Available' },
@@ -247,13 +349,41 @@ function refchSeed() {
     { id: 'ev19', refereeId: 'r2', type: 'deadline', topic: 'Match Assignment Deadline', date: offsetDate(7), time: '17:00', location: '', notes: '' }
   ];
 
-  return { referees: referees, organizations: organizations, fitnessResults: fitnessResults, screeningResults: screeningResults, events: events };
+  function isoOffset(days) {
+    var d = new Date(today);
+    d.setDate(d.getDate() + days);
+    return d.toISOString();
+  }
+
+  var messages = [
+    {
+      id: 'msg1', direction: 'outgoing', senderId: null, audienceType: 'all_referees',
+      audienceLabel: 'All Referees', recipientIds: referees.filter(function (r) { return r.refType === 'Referee'; }).map(function (r) { return r.id; }),
+      subject: 'Updated UEFA20 test window', body: 'Please confirm availability for the UEFA20 testing window opening next week.',
+      sentAt: isoOffset(-3)
+    },
+    {
+      id: 'msg2', direction: 'incoming', senderId: 'r6', audienceType: null,
+      audienceLabel: 'You (Refereeing Officer)', recipientIds: [],
+      subject: 'Hamstring update', body: 'Physio cleared the modified session today, feeling good for the return-to-test protocol.',
+      sentAt: isoOffset(-1)
+    },
+    {
+      id: 'msg3', direction: 'outgoing', senderId: null, audienceType: 'org_role',
+      audienceLabel: 'UEFA — Fitness Coach', recipientIds: [],
+      subject: 'Training load review', body: 'Please review this week\'s acute:chronic ratios before Friday\'s planning call.',
+      sentAt: isoOffset(-5)
+    }
+  ];
+
+  return { referees: referees, organizations: organizations, fitnessResults: fitnessResults, screeningResults: screeningResults, events: events, messages: messages };
 }
 
 function refchMigrate(state) {
   if (!state.fitnessResults) state.fitnessResults = [];
   if (!state.screeningResults) state.screeningResults = [];
   if (!state.events) state.events = [];
+  if (!state.messages) state.messages = [];
   state.referees.forEach(function (r) {
     if (!r.anthro) r.anthro = { height: null, weight: null, bodyFat: null };
     if (!r.bodyMap) r.bodyMap = {};
