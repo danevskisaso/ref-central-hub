@@ -70,6 +70,19 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  /* ---------- Sidebar dropdown (Training > Training Files) ---------- */
+  document.querySelectorAll('.nav-dropdown').forEach(function (dropdown) {
+    var hasActiveChild = dropdown.querySelector('.nav-subitem.active');
+    if (hasActiveChild) dropdown.classList.add('open');
+
+    var toggleBtn = dropdown.querySelector('.nav-dropdown-toggle');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', function () {
+        dropdown.classList.toggle('open');
+      });
+    }
+  });
+
   /* ---------- Filter chips (visual only) ---------- */
   document.querySelectorAll('.filter-chip').forEach(function (chip) {
     chip.addEventListener('click', function () {

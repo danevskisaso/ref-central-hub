@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Settings — Ref Central Hub</title>
+<title>Training Files — Ref Central Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -13,6 +13,9 @@
 <link rel="stylesheet" href="css/fitness.css">
 <link rel="stylesheet" href="css/communication.css">
 <link rel="stylesheet" href="css/settings.css">
+<link rel="stylesheet" href="css/drills.css">
+<link rel="stylesheet" href="css/documents.css">
+<link rel="stylesheet" href="css/training-files.css">
 </head>
 <body class="app-body">
 
@@ -46,14 +49,14 @@
 
     <div class="nav-group">
       <div class="nav-label" data-i18n="grp_performance">Performance</div>
-      <div class="nav-dropdown">
+      <div class="nav-dropdown open">
         <button type="button" class="nav-item nav-dropdown-toggle">
           <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 17l4.5-6 3.5 3.5L15.5 6l2.5 3"/></svg></span>
           <span class="nav-text" data-i18n="nav_training">Training</span>
           <svg class="nav-caret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="nav-submenu">
-          <a class="nav-subitem" href="training-files.html">
+          <a class="nav-subitem active" href="training-files.html">
             <span class="nav-text" data-i18n="nav_training_files">Training Files</span>
           </a>
         </div>
@@ -134,7 +137,7 @@
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="7" r="2.6"/><path d="M3 17c0-2.6 2.2-4.7 5-4.7s5 2.1 5 4.7"/><circle cx="15.2" cy="6" r="1.4"/><path d="M14 11.5c1.7.3 3 1.8 3 3.6"/></svg></span>
         <span class="nav-text" data-i18n="nav_user_management">User Management</span>
       </a>
-      <a class="nav-item active" href="settings.html">
+      <a class="nav-item" href="settings.html">
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="2.6"/><path d="M10 3v1.8M10 15.2V17M17 10h-1.8M4.8 10H3M14.9 5.1l-1.3 1.3M6.4 13.6l-1.3 1.3M14.9 14.9l-1.3-1.3M6.4 6.4L5.1 5.1"/></svg></span>
         <span class="nav-text" data-i18n="nav_settings">Settings</span>
       </a>
@@ -182,112 +185,94 @@
 
   <main class="content">
     <div class="page-head">
-      <div>
-        <h1 data-i18n="page_settings_title">Settings</h1>
-        <p class="page-sub" data-i18n="page_settings_sub">Integrations, personal preferences, organization and security.</p>
+      <div class="tf-title-row">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#15212D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="4" r="2"/><path d="M8 20l2-6 3-2-1-4-3 1"/><path d="M10 10l3 1 2 3 3 1"/><path d="M12 14l-2 2-4 1"/></svg>
+        <div>
+          <h1 data-i18n="page_training_files_title">Training files</h1>
+          <p class="page-sub" data-i18n="page_training_files_sub">Manage your GPS and HRM files here.</p>
+        </div>
       </div>
     </div>
 
-    <div class="doc-tabs" id="settingsTabs"></div>
+    <div class="tf-tabs" id="tfTabs"></div>
 
-    <!-- ===== Integrations tab ===== -->
-    <div class="settings-panel" id="panel-integrations">
-      <div class="card card-pad" style="margin-bottom:16px;">
-        <div class="card-head">
-          <div>
-            <div class="card-title">Polar Integration</div>
-            <div class="card-subtitle" style="margin:0;">Pull training sessions and heart-rate data straight from Polar watches.</div>
+    <div class="card card-pad" id="tfFilterCard" style="margin-bottom:0; border-radius:0 0 12px 12px;">
+      <div class="tf-filter-row">
+        <div class="tf-filter-group">
+          <label data-i18n="label_date">Date</label>
+          <div class="tf-date-range">
+            <input type="date" id="tfDateFrom">
+            <span class="tf-till" data-i18n="label_till">till</span>
+            <input type="date" id="tfDateTo">
           </div>
-          <span class="badge" id="polarStatusBadge"><span class="badge-dot"></span>Not Connected</span>
         </div>
-
-        <div id="polarDisconnected">
-          <div class="form-field">
-            <label for="polarClientId">Polar Flow / Team Pro Client ID</label>
-            <input type="text" id="polarClientId" placeholder="e.g. uefa-refcentralhub-prod">
-          </div>
-          <div class="form-hint" style="margin-top:0;margin-bottom:14px;">This demo simulates the OAuth handshake — in production this would redirect to Polar's authorization page.</div>
-          <button class="btn btn-primary" id="connectPolarBtn">Connect Polar Account</button>
-        </div>
-
-        <div id="polarConnected" style="display:none;">
-          <div class="polar-status-row">
-            <div>
-              <div class="polar-status-label">Connected as</div>
-              <div class="polar-status-value" id="polarClientIdValue">—</div>
-            </div>
-            <div>
-              <div class="polar-status-label">Last synced</div>
-              <div class="polar-status-value" id="polarLastSync">—</div>
-            </div>
-          </div>
-          <div class="form-field">
-            <label for="polarSyncReferee">Sync training data for</label>
-            <select id="polarSyncReferee"></select>
-          </div>
-          <div class="polar-actions">
-            <button class="btn btn-primary" id="syncPolarBtn">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.5 9a9 9 0 0114.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0020.5 15"/></svg>
-              Sync Now
-            </button>
-            <button class="btn btn-ghost" id="disconnectPolarBtn">Disconnect</button>
-          </div>
-          <div class="form-hint">Syncing imports one new session into Training Analysis with realistic HR zone data for the selected referee.</div>
+        <div class="tf-filter-group tf-filter-status">
+          <label data-i18n="label_status">Status</label>
+          <select id="tfStatus"></select>
         </div>
       </div>
-
-      <div class="card card-pad">
-        <div class="card-head"><div class="card-title">More Integrations</div></div>
-        <div class="integration-grid" id="moreIntegrations"></div>
+      <div class="tf-filter-actions">
+        <button class="btn btn-ghost" id="tfFilterBtn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+          <span data-i18n="btn_filter">Filter</span>
+        </button>
+        <button class="btn btn-ghost" id="tfResetBtn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span data-i18n="btn_reset">Reset</span>
+        </button>
       </div>
     </div>
 
-    <!-- ===== Personal tab ===== -->
-    <div class="settings-panel" id="panel-personal" style="display:none;">
-      <div class="card card-pad" style="margin-bottom:16px;">
-        <div class="card-head"><div class="card-title">Profile</div></div>
-        <div class="personal-row">
-          <div class="avatar" style="background:#1C5CAB;width:52px;height:52px;font-size:16px;">AM</div>
-          <div>
-            <div class="personal-name">Alex Martin</div>
-            <div class="personal-role">Refereeing Officer · International Referee</div>
-          </div>
-        </div>
-        <div class="form-field" style="margin-top:16px; max-width:240px;">
-          <label for="langSelect">Language</label>
-          <select id="langSelect"><option>English</option></select>
-        </div>
-        <div class="form-hint">Additional languages can be added without touching the rest of the platform — the architecture already supports it.</div>
-      </div>
-
-      <div class="card card-pad">
-        <div class="card-head"><div class="card-title">Notifications</div></div>
-        <div class="toggle-list" id="notifToggles"></div>
+    <!-- HRM / GPS / EPTS results panel -->
+    <div class="card" id="tfResultsPanel" style="border-radius:0 0 12px 12px; margin-bottom:16px;">
+      <div id="tfResultsBody"></div>
+      <div class="tf-pagination">
+        <button class="tf-page-btn" id="tfPrevBtn">&lt;</button>
+        <button class="tf-page-btn" id="tfNextBtn">&gt;</button>
+        <select id="tfPageSize" class="filter-select" style="margin-left:4px;">
+          <option>10</option>
+          <option selected>25</option>
+          <option>50</option>
+        </select>
+        <span class="tf-showing" id="tfShowing"></span>
       </div>
     </div>
 
-    <!-- ===== Organization tab ===== -->
-    <div class="settings-panel" id="panel-organization" style="display:none;">
-      <div class="card card-pad">
-        <div class="card-head">
-          <div class="card-title">Organizations</div>
-          <a href="organizations.html" class="card-link">Manage organizations</a>
-        </div>
-        <div class="org-settings-list" id="orgSettingsList"></div>
+    <!-- Upload panel -->
+    <div class="card card-pad" id="tfUploadPanel" style="display:none; margin-bottom:16px;">
+      <div class="card-head"><div class="card-title">Upload a training file</div></div>
+      <div class="dropzone" id="tfDropzone">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M12 3l-4 4M12 3l4 4"/><path d="M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4"/></svg>
+        <div class="dz-title">Click to choose a file</div>
+        <div class="dz-sub">FIT, TCX, GPX, HRM, CSV or XLSX</div>
+        <input type="file" id="tfFileInput" accept=".fit,.tcx,.gpx,.hrm,.csv,.xlsx" hidden>
       </div>
+      <div class="selected-file" id="tfSelectedFile" style="display:none;"></div>
+      <div class="form-grid" style="margin-top:14px;">
+        <div class="form-field">
+          <label for="tfUploadReferee">Referee</label>
+          <select id="tfUploadReferee"></select>
+        </div>
+        <div class="form-field">
+          <label for="tfUploadType">File type</label>
+          <select id="tfUploadType"></select>
+        </div>
+        <div class="form-field">
+          <label for="tfUploadSource">Source</label>
+          <input type="text" id="tfUploadSource" placeholder="e.g. Polar, Garmin, Catapult" value="Manual Upload">
+        </div>
+        <div class="form-field">
+          <label for="tfUploadDate">Session date</label>
+          <input type="date" id="tfUploadDate">
+        </div>
+      </div>
+      <button class="btn btn-primary" id="tfUploadBtn" disabled>Upload File</button>
     </div>
 
-    <!-- ===== Security tab ===== -->
-    <div class="settings-panel" id="panel-security" style="display:none;">
-      <div class="card card-pad">
-        <div class="card-head">
-          <div>
-            <div class="card-title">Audit Log</div>
-            <div class="card-subtitle" style="margin:0;">Every traceable action taken in this browser session — documents, messages, training sessions, syncs.</div>
-          </div>
-        </div>
-        <div class="audit-list" id="auditList"></div>
-      </div>
+    <!-- Imports panel -->
+    <div class="card card-pad" id="tfImportsPanel" style="display:none; margin-bottom:16px;">
+      <div class="card-head"><div class="card-title">Import batches</div></div>
+      <div id="tfImportsBody"></div>
     </div>
 
   </main>
@@ -298,6 +283,6 @@
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
 <script src="js/i18n.js"></script>
-<script src="js/settings.js"></script>
+<script src="js/training-files.js"></script>
 </body>
 </html>

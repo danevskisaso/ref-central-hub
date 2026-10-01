@@ -648,9 +648,19 @@ function refchSeed() {
     { id: 'ts13', refereeId: 'r1', date: monthDate(28), category: 'Aerobic Capacity', durationMin: 70, distanceKm: 13, trainingLoad: 185, avgHR: 146, maxHR: 163, zones: { z1: 9, z2: 43, z3: 18, z4: 0, z5: 0 } }
   ];
 
+  var trainingFiles = [
+    { id: 'tf1', refereeId: 'r1', type: 'hrm', filename: 'AlexMartin_' + monthDate(2) + '.hrm', sessionDate: monthDate(2), uploadedAt: isoOffset(-26), status: 'Processed', fileSize: 48200, source: 'Polar' },
+    { id: 'tf2', refereeId: 'r1', type: 'hrm', filename: 'AlexMartin_' + monthDate(9) + '.hrm', sessionDate: monthDate(9), uploadedAt: isoOffset(-19), status: 'Processed', fileSize: 51400, source: 'Polar' },
+    { id: 'tf3', refereeId: 'r1', type: 'hrm', filename: 'AlexMartin_' + monthDate(16) + '.hrm', sessionDate: monthDate(16), uploadedAt: isoOffset(-12), status: 'Processed', fileSize: 49800, source: 'Polar' },
+    { id: 'tf4', refereeId: 'r6', type: 'hrm', filename: 'TomaszNowak_' + monthDate(18) + '.hrm', sessionDate: monthDate(18), uploadedAt: isoOffset(-10), status: 'Error', fileSize: 12300, source: 'Polar' },
+    { id: 'tf5', refereeId: 'r3', type: 'gps', filename: 'SaraRossi_' + monthDate(4) + '.fit', sessionDate: monthDate(4), uploadedAt: isoOffset(-24), status: 'Processed', fileSize: 183400, source: 'Catapult' },
+    { id: 'tf6', refereeId: 'r3', type: 'gps', filename: 'SaraRossi_' + monthDate(13) + '.fit', sessionDate: monthDate(13), uploadedAt: isoOffset(-15), status: 'Processed', fileSize: 176900, source: 'Catapult' },
+    { id: 'tf7', refereeId: 'r5', type: 'gps', filename: 'EmreAydin_' + monthDate(23) + '.gpx', sessionDate: monthDate(23), uploadedAt: isoOffset(-5), status: 'Pending', fileSize: 94200, source: 'STATSports' }
+  ];
+
   return {
     referees: referees, organizations: organizations, fitnessResults: fitnessResults, screeningResults: screeningResults,
-    events: events, messages: messages, documents: [], trainingSessions: trainingSessions,
+    events: events, messages: messages, documents: [], trainingSessions: trainingSessions, trainingFiles: trainingFiles,
     integrations: { polar: { connected: false, clientId: '', lastSync: null } },
     notificationPrefs: { matchAssignments: true, trainingReminders: true, alerts: true, weeklyDigest: false },
     drills: []
@@ -667,6 +677,7 @@ function refchMigrate(state) {
   if (!state.integrations) state.integrations = { polar: { connected: false, clientId: '', lastSync: null } };
   if (!state.notificationPrefs) state.notificationPrefs = { matchAssignments: true, trainingReminders: true, alerts: true, weeklyDigest: false };
   if (!state.drills) state.drills = [];
+  if (!state.trainingFiles) state.trainingFiles = [];
   state.referees.forEach(function (r) {
     if (!r.anthro) r.anthro = { height: null, weight: null, bodyFat: null };
     if (!r.bodyMap) r.bodyMap = {};
@@ -959,6 +970,48 @@ function refchGenerateTrainingProposal(params) {
     workRestRatio: ratioText,
     ratioNote: ratioNote
   };
+}
+
+/* ---------------- Training Files (GPS / HRM / EPTS device files) ---------------- */
+
+var TRAINING_FILE_TYPES = [
+  { id: 'hrm', label: 'HRM files' },
+  { id: 'gps', label: 'GPS files' },
+  { id: 'epts', label: 'EPTS files' }
+];
+
+var FILE_STATUS_OPTIONS = ['Processed', 'Pending', 'Error'];
+
+function refchAddTrainingFile(data) {
+  var file = {
+    id: data.id || refchUid('tf'),
+    refereeId: data.refereeId,
+    type: data.type,
+    filename: data.filename,
+    sessionDate: data.sessionDate,
+    uploadedAt: new Date().toISOString(),
+    status: data.status || 'Processed',
+    fileSize: data.fileSize || 0,
+    source: data.source || 'Manual Upload'
+  };
+  refchState.trainingFiles.push(file);
+  refchSave();
+  return file;
+}
+
+function refchRemoveTrainingFile(id) {
+  refchState.trainingFiles = refchState.trainingFiles.filter(function (f) { return f.id !== id; });
+  refchSave();
+}
+
+function refchTrainingFilesFor(type, filters) {
+  filters = filters || {};
+  return refchState.trainingFiles
+    .filter(function (f) { return f.type === type; })
+    .filter(function (f) { return !filters.dateFrom || f.sessionDate >= filters.dateFrom; })
+    .filter(function (f) { return !filters.dateTo || f.sessionDate <= filters.dateTo; })
+    .filter(function (f) { return !filters.status || filters.status === 'All' || f.status === filters.status; })
+    .sort(function (a, b) { return a.sessionDate < b.sessionDate ? 1 : -1; });
 }
 
 function refchAddOrganization(data) {

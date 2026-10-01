@@ -20,7 +20,7 @@ var LANGUAGES = [
 var TRANSLATIONS = {
   en: {
     grp_overview: 'Overview', grp_performance: 'Performance', grp_planning: 'Planning', grp_intelligence: 'Intelligence', grp_admin: 'Admin',
-    nav_dashboard: 'Dashboard', nav_referees: 'Referees', nav_training: 'Training', nav_drills: 'Drills', nav_match_analysis: 'Match Analysis',
+    nav_dashboard: 'Dashboard', nav_referees: 'Referees', nav_training: 'Training', nav_training_files: 'Training Files', nav_drills: 'Drills', nav_match_analysis: 'Match Analysis',
     nav_training_analysis: 'Training Analysis', nav_onfield_review: 'On-Field Review', nav_fitness_tests: 'Fitness Tests',
     nav_screening: 'Screening', nav_recommendations: 'Recommendations', nav_training_programmes: 'Training Programmes',
     nav_calendar: 'Calendar', nav_communication: 'Communication', nav_documents: 'Documents', nav_reports: 'Reports',
@@ -42,11 +42,15 @@ var TRANSLATIONS = {
     btn_new_report: 'New Report', btn_add_referee: 'Add Referee', btn_add_organization: 'Add Organization', btn_add_result: 'Add Result',
     btn_add_screening_result: 'Add Screening Result', btn_add_event: 'Add Event', btn_upload_share: 'Upload & Share', btn_log_session: 'Log Training Session',
     page_drills_title: 'Drills', page_drills_sub: 'Design professional referee drills on a pitch canvas, or generate a training proposal from intensity and distance.',
-    btn_generate_training: 'Generate Training', btn_create_drill: 'Create new drill', modal_create_drill: 'Create new drill', modal_generator: 'Training Generator'
+    btn_generate_training: 'Generate Training', btn_create_drill: 'Create new drill', modal_create_drill: 'Create new drill', modal_generator: 'Training Generator',
+    page_training_files_title: 'Training files', page_training_files_sub: 'Manage your GPS and HRM files here.',
+    tab_hrm_files: 'HRM files', tab_gps_files: 'GPS files', tab_epts_files: 'EPTS files', tab_upload: 'Upload', tab_imports: 'Imports',
+    label_date: 'Date', label_till: 'till', label_status: 'Status', btn_filter: 'Filter', btn_reset: 'Reset', status_all: 'All',
+    msg_no_results_title: 'No results!', msg_no_results_sub: 'Unfortunately no results could be found to your search.', label_showing: 'Showing'
   },
   es: {
     grp_overview: 'Resumen', grp_performance: 'Rendimiento', grp_planning: 'Planificación', grp_intelligence: 'Inteligencia', grp_admin: 'Administración',
-    nav_dashboard: 'Panel', nav_referees: 'Árbitros', nav_training: 'Entrenamiento', nav_drills: 'Ejercicios', nav_match_analysis: 'Análisis de Partido',
+    nav_dashboard: 'Panel', nav_referees: 'Árbitros', nav_training: 'Entrenamiento', nav_training_files: 'Archivos de Entrenamiento', nav_drills: 'Ejercicios', nav_match_analysis: 'Análisis de Partido',
     nav_training_analysis: 'Análisis de Entrenamiento', nav_onfield_review: 'Revisión en Campo', nav_fitness_tests: 'Pruebas Físicas',
     nav_screening: 'Evaluación Médica', nav_recommendations: 'Recomendaciones', nav_training_programmes: 'Programas de Entrenamiento',
     nav_calendar: 'Calendario', nav_communication: 'Comunicación', nav_documents: 'Documentos', nav_reports: 'Informes',
@@ -68,11 +72,15 @@ var TRANSLATIONS = {
     btn_new_report: 'Nuevo Informe', btn_add_referee: 'Añadir Árbitro', btn_add_organization: 'Añadir Organización', btn_add_result: 'Añadir Resultado',
     btn_add_screening_result: 'Añadir Resultado de Evaluación', btn_add_event: 'Añadir Evento', btn_upload_share: 'Subir y Compartir', btn_log_session: 'Registrar Sesión de Entrenamiento',
     page_drills_title: 'Ejercicios', page_drills_sub: 'Diseña ejercicios profesionales para árbitros sobre un campo, o genera una propuesta de entrenamiento a partir de la intensidad y la distancia.',
-    btn_generate_training: 'Generar Entrenamiento', btn_create_drill: 'Crear nuevo ejercicio', modal_create_drill: 'Crear nuevo ejercicio', modal_generator: 'Generador de Entrenamientos'
+    btn_generate_training: 'Generar Entrenamiento', btn_create_drill: 'Crear nuevo ejercicio', modal_create_drill: 'Crear nuevo ejercicio', modal_generator: 'Generador de Entrenamientos',
+    page_training_files_title: 'Archivos de entrenamiento', page_training_files_sub: 'Gestiona aquí tus archivos GPS y de frecuencia cardíaca.',
+    tab_hrm_files: 'Archivos HRM', tab_gps_files: 'Archivos GPS', tab_epts_files: 'Archivos EPTS', tab_upload: 'Subir', tab_imports: 'Importaciones',
+    label_date: 'Fecha', label_till: 'hasta', label_status: 'Estado', btn_filter: 'Filtrar', btn_reset: 'Restablecer', status_all: 'Todos',
+    msg_no_results_title: '¡Sin resultados!', msg_no_results_sub: 'No se han encontrado resultados para tu búsqueda.', label_showing: 'Mostrando'
   },
   de: {
     grp_overview: 'Übersicht', grp_performance: 'Leistung', grp_planning: 'Planung', grp_intelligence: 'Analyse', grp_admin: 'Verwaltung',
-    nav_dashboard: 'Dashboard', nav_referees: 'Schiedsrichter', nav_training: 'Training', nav_drills: 'Übungen', nav_match_analysis: 'Spielanalyse',
+    nav_dashboard: 'Dashboard', nav_referees: 'Schiedsrichter', nav_training: 'Training', nav_training_files: 'Trainingsdateien', nav_drills: 'Übungen', nav_match_analysis: 'Spielanalyse',
     nav_training_analysis: 'Trainingsanalyse', nav_onfield_review: 'Platzbegehung', nav_fitness_tests: 'Fitnesstests',
     nav_screening: 'Screening', nav_recommendations: 'Empfehlungen', nav_training_programmes: 'Trainingsprogramme',
     nav_calendar: 'Kalender', nav_communication: 'Kommunikation', nav_documents: 'Dokumente', nav_reports: 'Berichte',
@@ -94,11 +102,15 @@ var TRANSLATIONS = {
     btn_new_report: 'Neuer Bericht', btn_add_referee: 'Schiedsrichter hinzufügen', btn_add_organization: 'Organisation hinzufügen', btn_add_result: 'Ergebnis hinzufügen',
     btn_add_screening_result: 'Screening-Ergebnis hinzufügen', btn_add_event: 'Termin hinzufügen', btn_upload_share: 'Hochladen & Teilen', btn_log_session: 'Trainingseinheit erfassen',
     page_drills_title: 'Übungen', page_drills_sub: 'Entwerfen Sie professionelle Schiedsrichterübungen auf einem Spielfeld-Canvas oder erstellen Sie einen Trainingsvorschlag aus Intensität und Distanz.',
-    btn_generate_training: 'Training generieren', btn_create_drill: 'Neue Übung erstellen', modal_create_drill: 'Neue Übung erstellen', modal_generator: 'Trainingsgenerator'
+    btn_generate_training: 'Training generieren', btn_create_drill: 'Neue Übung erstellen', modal_create_drill: 'Neue Übung erstellen', modal_generator: 'Trainingsgenerator',
+    page_training_files_title: 'Trainingsdateien', page_training_files_sub: 'Verwalten Sie hier Ihre GPS- und Herzfrequenzdateien.',
+    tab_hrm_files: 'HF-Dateien', tab_gps_files: 'GPS-Dateien', tab_epts_files: 'EPTS-Dateien', tab_upload: 'Hochladen', tab_imports: 'Importe',
+    label_date: 'Datum', label_till: 'bis', label_status: 'Status', btn_filter: 'Filtern', btn_reset: 'Zurücksetzen', status_all: 'Alle',
+    msg_no_results_title: 'Keine Ergebnisse!', msg_no_results_sub: 'Für Ihre Suche konnten leider keine Ergebnisse gefunden werden.', label_showing: 'Anzeige'
   },
   fr: {
     grp_overview: 'Aperçu', grp_performance: 'Performance', grp_planning: 'Planification', grp_intelligence: 'Intelligence', grp_admin: 'Administration',
-    nav_dashboard: 'Tableau de bord', nav_referees: 'Arbitres', nav_training: 'Entraînement', nav_drills: 'Exercices', nav_match_analysis: 'Analyse de Match',
+    nav_dashboard: 'Tableau de bord', nav_referees: 'Arbitres', nav_training: 'Entraînement', nav_training_files: "Fichiers d'Entraînement", nav_drills: 'Exercices', nav_match_analysis: 'Analyse de Match',
     nav_training_analysis: "Analyse d'Entraînement", nav_onfield_review: 'Revue sur le Terrain', nav_fitness_tests: 'Tests Physiques',
     nav_screening: 'Dépistage', nav_recommendations: 'Recommandations', nav_training_programmes: "Programmes d'Entraînement",
     nav_calendar: 'Calendrier', nav_communication: 'Communication', nav_documents: 'Documents', nav_reports: 'Rapports',
@@ -120,11 +132,15 @@ var TRANSLATIONS = {
     btn_new_report: 'Nouveau Rapport', btn_add_referee: 'Ajouter un Arbitre', btn_add_organization: 'Ajouter une Organisation', btn_add_result: 'Ajouter un Résultat',
     btn_add_screening_result: 'Ajouter un Résultat de Dépistage', btn_add_event: 'Ajouter un Événement', btn_upload_share: 'Téléverser et Partager', btn_log_session: 'Enregistrer une Séance',
     page_drills_title: 'Exercices', page_drills_sub: "Concevez des exercices professionnels pour arbitres sur un terrain, ou générez une proposition d'entraînement à partir de l'intensité et de la distance.",
-    btn_generate_training: 'Générer un Entraînement', btn_create_drill: 'Créer un nouvel exercice', modal_create_drill: 'Créer un nouvel exercice', modal_generator: "Générateur d'Entraînement"
+    btn_generate_training: 'Générer un Entraînement', btn_create_drill: 'Créer un nouvel exercice', modal_create_drill: 'Créer un nouvel exercice', modal_generator: "Générateur d'Entraînement",
+    page_training_files_title: "Fichiers d'entraînement", page_training_files_sub: 'Gérez ici vos fichiers GPS et de fréquence cardiaque.',
+    tab_hrm_files: 'Fichiers FC', tab_gps_files: 'Fichiers GPS', tab_epts_files: 'Fichiers EPTS', tab_upload: 'Téléverser', tab_imports: 'Importations',
+    label_date: 'Date', label_till: "jusqu'au", label_status: 'Statut', btn_filter: 'Filtrer', btn_reset: 'Réinitialiser', status_all: 'Tous',
+    msg_no_results_title: 'Aucun résultat !', msg_no_results_sub: "Aucun résultat n'a pu être trouvé pour votre recherche.", label_showing: 'Affichage de'
   },
   pt: {
     grp_overview: 'Visão Geral', grp_performance: 'Desempenho', grp_planning: 'Planeamento', grp_intelligence: 'Inteligência', grp_admin: 'Administração',
-    nav_dashboard: 'Painel', nav_referees: 'Árbitros', nav_training: 'Treino', nav_drills: 'Exercícios', nav_match_analysis: 'Análise de Jogo',
+    nav_dashboard: 'Painel', nav_referees: 'Árbitros', nav_training: 'Treino', nav_training_files: 'Ficheiros de Treino', nav_drills: 'Exercícios', nav_match_analysis: 'Análise de Jogo',
     nav_training_analysis: 'Análise de Treino', nav_onfield_review: 'Revisão em Campo', nav_fitness_tests: 'Testes Físicos',
     nav_screening: 'Rastreio', nav_recommendations: 'Recomendações', nav_training_programmes: 'Programas de Treino',
     nav_calendar: 'Calendário', nav_communication: 'Comunicação', nav_documents: 'Documentos', nav_reports: 'Relatórios',
@@ -146,11 +162,15 @@ var TRANSLATIONS = {
     btn_new_report: 'Novo Relatório', btn_add_referee: 'Adicionar Árbitro', btn_add_organization: 'Adicionar Organização', btn_add_result: 'Adicionar Resultado',
     btn_add_screening_result: 'Adicionar Resultado de Rastreio', btn_add_event: 'Adicionar Evento', btn_upload_share: 'Carregar e Partilhar', btn_log_session: 'Registar Sessão de Treino',
     page_drills_title: 'Exercícios', page_drills_sub: 'Crie exercícios profissionais para árbitros num campo, ou gere uma proposta de treino a partir da intensidade e distância.',
-    btn_generate_training: 'Gerar Treino', btn_create_drill: 'Criar novo exercício', modal_create_drill: 'Criar novo exercício', modal_generator: 'Gerador de Treino'
+    btn_generate_training: 'Gerar Treino', btn_create_drill: 'Criar novo exercício', modal_create_drill: 'Criar novo exercício', modal_generator: 'Gerador de Treino',
+    page_training_files_title: 'Ficheiros de treino', page_training_files_sub: 'Gira aqui os seus ficheiros de GPS e frequência cardíaca.',
+    tab_hrm_files: 'Ficheiros FC', tab_gps_files: 'Ficheiros GPS', tab_epts_files: 'Ficheiros EPTS', tab_upload: 'Carregar', tab_imports: 'Importações',
+    label_date: 'Data', label_till: 'até', label_status: 'Estado', btn_filter: 'Filtrar', btn_reset: 'Repor', status_all: 'Todos',
+    msg_no_results_title: 'Sem resultados!', msg_no_results_sub: 'Infelizmente não foram encontrados resultados para a sua pesquisa.', label_showing: 'A mostrar'
   },
   it: {
     grp_overview: 'Panoramica', grp_performance: 'Prestazione', grp_planning: 'Pianificazione', grp_intelligence: 'Intelligence', grp_admin: 'Amministrazione',
-    nav_dashboard: 'Dashboard', nav_referees: 'Arbitri', nav_training: 'Allenamento', nav_drills: 'Esercizi', nav_match_analysis: 'Analisi Partita',
+    nav_dashboard: 'Dashboard', nav_referees: 'Arbitri', nav_training: 'Allenamento', nav_training_files: 'File di Allenamento', nav_drills: 'Esercizi', nav_match_analysis: 'Analisi Partita',
     nav_training_analysis: 'Analisi Allenamento', nav_onfield_review: 'Revisione sul Campo', nav_fitness_tests: 'Test Fisici',
     nav_screening: 'Screening', nav_recommendations: 'Raccomandazioni', nav_training_programmes: 'Programmi di Allenamento',
     nav_calendar: 'Calendario', nav_communication: 'Comunicazione', nav_documents: 'Documenti', nav_reports: 'Report',
@@ -172,11 +192,15 @@ var TRANSLATIONS = {
     btn_new_report: 'Nuovo Report', btn_add_referee: 'Aggiungi Arbitro', btn_add_organization: 'Aggiungi Organizzazione', btn_add_result: 'Aggiungi Risultato',
     btn_add_screening_result: 'Aggiungi Risultato Screening', btn_add_event: 'Aggiungi Evento', btn_upload_share: 'Carica e Condividi', btn_log_session: 'Registra Sessione',
     page_drills_title: 'Esercizi', page_drills_sub: 'Progetta esercizi professionali per arbitri su un campo, oppure genera una proposta di allenamento da intensità e distanza.',
-    btn_generate_training: 'Genera Allenamento', btn_create_drill: 'Crea nuovo esercizio', modal_create_drill: 'Crea nuovo esercizio', modal_generator: 'Generatore di Allenamento'
+    btn_generate_training: 'Genera Allenamento', btn_create_drill: 'Crea nuovo esercizio', modal_create_drill: 'Crea nuovo esercizio', modal_generator: 'Generatore di Allenamento',
+    page_training_files_title: 'File di allenamento', page_training_files_sub: 'Gestisci qui i tuoi file GPS e di frequenza cardiaca.',
+    tab_hrm_files: 'File FC', tab_gps_files: 'File GPS', tab_epts_files: 'File EPTS', tab_upload: 'Carica', tab_imports: 'Importazioni',
+    label_date: 'Data', label_till: 'al', label_status: 'Stato', btn_filter: 'Filtra', btn_reset: 'Reimposta', status_all: 'Tutti',
+    msg_no_results_title: 'Nessun risultato!', msg_no_results_sub: 'Purtroppo non è stato trovato alcun risultato per la tua ricerca.', label_showing: 'Visualizzati'
   },
   nl: {
     grp_overview: 'Overzicht', grp_performance: 'Prestatie', grp_planning: 'Planning', grp_intelligence: 'Intelligence', grp_admin: 'Beheer',
-    nav_dashboard: 'Dashboard', nav_referees: 'Scheidsrechters', nav_training: 'Training', nav_drills: 'Oefeningen', nav_match_analysis: 'Wedstrijdanalyse',
+    nav_dashboard: 'Dashboard', nav_referees: 'Scheidsrechters', nav_training: 'Training', nav_training_files: 'Trainingsbestanden', nav_drills: 'Oefeningen', nav_match_analysis: 'Wedstrijdanalyse',
     nav_training_analysis: 'Trainingsanalyse', nav_onfield_review: 'Veldbeoordeling', nav_fitness_tests: 'Fitheidstests',
     nav_screening: 'Screening', nav_recommendations: 'Aanbevelingen', nav_training_programmes: "Trainingsprogramma's",
     nav_calendar: 'Kalender', nav_communication: 'Communicatie', nav_documents: 'Documenten', nav_reports: 'Rapporten',
@@ -198,11 +222,15 @@ var TRANSLATIONS = {
     btn_new_report: 'Nieuw Rapport', btn_add_referee: 'Scheidsrechter Toevoegen', btn_add_organization: 'Organisatie Toevoegen', btn_add_result: 'Resultaat Toevoegen',
     btn_add_screening_result: 'Screeningresultaat Toevoegen', btn_add_event: 'Gebeurtenis Toevoegen', btn_upload_share: 'Uploaden & Delen', btn_log_session: 'Trainingssessie Registreren',
     page_drills_title: 'Oefeningen', page_drills_sub: 'Ontwerp professionele scheidsrechtersoefeningen op een veldcanvas, of genereer een trainingsvoorstel op basis van intensiteit en afstand.',
-    btn_generate_training: 'Training Genereren', btn_create_drill: 'Nieuwe oefening maken', modal_create_drill: 'Nieuwe oefening maken', modal_generator: 'Trainingsgenerator'
+    btn_generate_training: 'Training Genereren', btn_create_drill: 'Nieuwe oefening maken', modal_create_drill: 'Nieuwe oefening maken', modal_generator: 'Trainingsgenerator',
+    page_training_files_title: 'Trainingsbestanden', page_training_files_sub: 'Beheer hier uw GPS- en hartslagbestanden.',
+    tab_hrm_files: 'HF-bestanden', tab_gps_files: 'GPS-bestanden', tab_epts_files: 'EPTS-bestanden', tab_upload: 'Uploaden', tab_imports: 'Importen',
+    label_date: 'Datum', label_till: 'tot', label_status: 'Status', btn_filter: 'Filteren', btn_reset: 'Resetten', status_all: 'Alle',
+    msg_no_results_title: 'Geen resultaten!', msg_no_results_sub: 'Er zijn helaas geen resultaten gevonden voor uw zoekopdracht.', label_showing: 'Weergave'
   },
   pl: {
     grp_overview: 'Przegląd', grp_performance: 'Wydajność', grp_planning: 'Planowanie', grp_intelligence: 'Analityka', grp_admin: 'Administracja',
-    nav_dashboard: 'Panel', nav_referees: 'Sędziowie', nav_training: 'Trening', nav_drills: 'Ćwiczenia', nav_match_analysis: 'Analiza Meczu',
+    nav_dashboard: 'Panel', nav_referees: 'Sędziowie', nav_training: 'Trening', nav_training_files: 'Pliki Treningowe', nav_drills: 'Ćwiczenia', nav_match_analysis: 'Analiza Meczu',
     nav_training_analysis: 'Analiza Treningu', nav_onfield_review: 'Przegląd na Boisku', nav_fitness_tests: 'Testy Sprawnościowe',
     nav_screening: 'Badania Przesiewowe', nav_recommendations: 'Rekomendacje', nav_training_programmes: 'Programy Treningowe',
     nav_calendar: 'Kalendarz', nav_communication: 'Komunikacja', nav_documents: 'Dokumenty', nav_reports: 'Raporty',
@@ -224,7 +252,11 @@ var TRANSLATIONS = {
     btn_new_report: 'Nowy Raport', btn_add_referee: 'Dodaj Sędziego', btn_add_organization: 'Dodaj Organizację', btn_add_result: 'Dodaj Wynik',
     btn_add_screening_result: 'Dodaj Wynik Badania', btn_add_event: 'Dodaj Wydarzenie', btn_upload_share: 'Prześlij i Udostępnij', btn_log_session: 'Zarejestruj Sesję Treningową',
     page_drills_title: 'Ćwiczenia', page_drills_sub: 'Projektuj profesjonalne ćwiczenia dla sędziów na boisku, albo wygeneruj propozycję treningu na podstawie intensywności i dystansu.',
-    btn_generate_training: 'Generuj Trening', btn_create_drill: 'Utwórz nowe ćwiczenie', modal_create_drill: 'Utwórz nowe ćwiczenie', modal_generator: 'Generator Treningów'
+    btn_generate_training: 'Generuj Trening', btn_create_drill: 'Utwórz nowe ćwiczenie', modal_create_drill: 'Utwórz nowe ćwiczenie', modal_generator: 'Generator Treningów',
+    page_training_files_title: 'Pliki treningowe', page_training_files_sub: 'Zarządzaj tutaj swoimi plikami GPS i tętna.',
+    tab_hrm_files: 'Pliki tętna', tab_gps_files: 'Pliki GPS', tab_epts_files: 'Pliki EPTS', tab_upload: 'Prześlij', tab_imports: 'Importy',
+    label_date: 'Data', label_till: 'do', label_status: 'Status', btn_filter: 'Filtruj', btn_reset: 'Resetuj', status_all: 'Wszystkie',
+    msg_no_results_title: 'Brak wyników!', msg_no_results_sub: 'Niestety nie znaleziono wyników dla Twojego wyszukiwania.', label_showing: 'Wyświetlanie'
   }
 };
 
