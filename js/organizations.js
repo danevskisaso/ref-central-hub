@@ -115,7 +115,7 @@ function renderOrgDetail(id) {
       var ref = refchRefereeById(m.refereeId);
       if (!ref) return '';
       return '<tr>' +
-        '<td><span class="roster-name"><span class="avatar avatar-xs" style="background:' + ref.color + '">' + refchInitials(ref.name) + '</span>' + ref.name + '</span></td>' +
+        '<td><a class="roster-name" href="referees.html?open=' + ref.id + '" title="Open and edit this referee\'s profile"><span class="avatar avatar-xs" style="background:' + ref.color + '">' + refchInitials(ref.name) + '</span>' + ref.name + '</a></td>' +
         '<td><span class="role-chip"><span class="dot" style="background:' + refchRoleColor(m.role) + '"></span>' + refchRoleLabel(m.role) + '</span></td>' +
         '<td style="text-align:right;"><button class="btn btn-ghost roster-remove" data-ref="' + m.refereeId + '" data-role="' + m.role + '" style="padding:5px 10px;font-size:11.5px;">Remove</button></td>' +
       '</tr>';

@@ -119,7 +119,7 @@
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="7" r="2.6"/><path d="M3 17c0-2.6 2.2-4.7 5-4.7s5 2.1 5 4.7"/><circle cx="15.2" cy="6" r="1.4"/><path d="M14 11.5c1.7.3 3 1.8 3 3.6"/></svg></span>
         <span class="nav-text">User Management</span>
       </a>
-      <a class="nav-item" href="#">
+      <a class="nav-item" href="settings.html">
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="2.6"/><path d="M10 3v1.8M10 15.2V17M17 10h-1.8M4.8 10H3M14.9 5.1l-1.3 1.3M6.4 13.6l-1.3 1.3M14.9 14.9l-1.3-1.3M6.4 6.4L5.1 5.1"/></svg></span>
         <span class="nav-text">Settings</span>
       </a>
@@ -253,9 +253,16 @@
 <div class="modal-overlay" id="refDetailModal">
   <div class="modal">
     <div class="modal-head">
-      <div>
-        <h3 id="rdName">—</h3>
-        <p id="rdMeta">—</p>
+      <div class="rd-head-main">
+        <div class="rd-photo" id="rdPhoto" title="Click to change photo">
+          <span id="rdPhotoInitials">—</span>
+          <div class="rd-photo-edit"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+          <input type="file" id="rdPhotoInput" accept="image/*" hidden>
+        </div>
+        <div>
+          <h3 id="rdName">—</h3>
+          <p id="rdMeta">—</p>
+        </div>
       </div>
       <button class="modal-close" data-close-modal><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
@@ -270,7 +277,67 @@
       </div>
     </div>
     <div class="modal-foot">
+      <button class="btn btn-ghost" id="rdEditProfileBtn">Edit Profile</button>
       <button class="btn btn-ghost" data-close-modal>Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Edit Profile modal ===== -->
+<div class="modal-overlay" id="editProfileModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3>Edit Profile</h3>
+        <p>Referees can update their own country, category and photo here.</p>
+      </div>
+      <button class="modal-close" data-close-modal><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <form id="editProfileForm">
+        <input type="hidden" id="epId">
+        <div class="form-grid">
+          <div class="form-field full">
+            <label for="epName">Full name</label>
+            <input type="text" id="epName" required>
+          </div>
+          <div class="form-field">
+            <label for="epCountry">Country</label>
+            <input type="text" id="epCountry" required>
+          </div>
+          <div class="form-field">
+            <label for="epFlag">Flag emoji</label>
+            <input type="text" id="epFlag" maxlength="4">
+          </div>
+          <div class="form-field">
+            <label for="epCategory">Category</label>
+            <select id="epCategory"></select>
+          </div>
+          <div class="form-field">
+            <label for="epType">Role on pitch</label>
+            <select id="epType">
+              <option>Referee</option>
+              <option>Assistant Referee</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="epAge">Age</label>
+            <input type="number" id="epAge" min="18" max="60">
+          </div>
+          <div class="form-field">
+            <label for="epStatus">Status</label>
+            <select id="epStatus"></select>
+          </div>
+          <div class="form-field">
+            <label for="epHrMax">Max HR (bpm)</label>
+            <input type="number" id="epHrMax" min="120" max="230">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close-modal>Cancel</button>
+      <button class="btn btn-primary" id="submitEditProfile">Save Changes</button>
     </div>
   </div>
 </div>

@@ -1,58 +1,12 @@
 /* ============================================================
    REF CENTRAL HUB — Documents page
-   Files are stored in IndexedDB (this browser only). Metadata
-   (name, type, size, sharing) lives in the regular refchState.
+   Files are stored in IndexedDB (this browser only) via the shared
+   idb* helpers in app.js. Metadata (name, type, size, sharing) lives
+   in the regular refchState.
    ============================================================ */
 
-var IDB_NAME = 'refch_files_db';
-var IDB_STORE = 'files';
 var selectedFile = null;
 var activeDocTab = 'all';
-
-function idbOpen() {
-  return new Promise(function (resolve, reject) {
-    var req = indexedDB.open(IDB_NAME, 1);
-    req.onupgradeneeded = function (e) {
-      var db = e.target.result;
-      if (!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
-    };
-    req.onsuccess = function (e) { resolve(e.target.result); };
-    req.onerror = function (e) { reject(e.target.error); };
-  });
-}
-
-function idbPutFile(id, blob) {
-  return idbOpen().then(function (db) {
-    return new Promise(function (resolve, reject) {
-      var tx = db.transaction(IDB_STORE, 'readwrite');
-      tx.objectStore(IDB_STORE).put(blob, id);
-      tx.oncomplete = function () { resolve(); };
-      tx.onerror = function (e) { reject(e.target.error); };
-    });
-  });
-}
-
-function idbGetFile(id) {
-  return idbOpen().then(function (db) {
-    return new Promise(function (resolve, reject) {
-      var tx = db.transaction(IDB_STORE, 'readonly');
-      var req = tx.objectStore(IDB_STORE).get(id);
-      req.onsuccess = function () { resolve(req.result); };
-      req.onerror = function (e) { reject(e.target.error); };
-    });
-  });
-}
-
-function idbDeleteFile(id) {
-  return idbOpen().then(function (db) {
-    return new Promise(function (resolve, reject) {
-      var tx = db.transaction(IDB_STORE, 'readwrite');
-      tx.objectStore(IDB_STORE).delete(id);
-      tx.oncomplete = function () { resolve(); };
-      tx.onerror = function (e) { reject(e.target.error); };
-    });
-  });
-}
 
 document.addEventListener('DOMContentLoaded', function () {
   populateShareType();

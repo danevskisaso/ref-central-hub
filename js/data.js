@@ -648,7 +648,12 @@ function refchSeed() {
     { id: 'ts13', refereeId: 'r1', date: monthDate(28), category: 'Aerobic Capacity', durationMin: 70, distanceKm: 13, trainingLoad: 185, avgHR: 146, maxHR: 163, zones: { z1: 9, z2: 43, z3: 18, z4: 0, z5: 0 } }
   ];
 
-  return { referees: referees, organizations: organizations, fitnessResults: fitnessResults, screeningResults: screeningResults, events: events, messages: messages, documents: [], trainingSessions: trainingSessions };
+  return {
+    referees: referees, organizations: organizations, fitnessResults: fitnessResults, screeningResults: screeningResults,
+    events: events, messages: messages, documents: [], trainingSessions: trainingSessions,
+    integrations: { polar: { connected: false, clientId: '', lastSync: null } },
+    notificationPrefs: { matchAssignments: true, trainingReminders: true, alerts: true, weeklyDigest: false }
+  };
 }
 
 function refchMigrate(state) {
@@ -658,6 +663,8 @@ function refchMigrate(state) {
   if (!state.messages) state.messages = [];
   if (!state.documents) state.documents = [];
   if (!state.trainingSessions) state.trainingSessions = [];
+  if (!state.integrations) state.integrations = { polar: { connected: false, clientId: '', lastSync: null } };
+  if (!state.notificationPrefs) state.notificationPrefs = { matchAssignments: true, trainingReminders: true, alerts: true, weeklyDigest: false };
   state.referees.forEach(function (r) {
     if (!r.anthro) r.anthro = { height: null, weight: null, bodyFat: null };
     if (!r.bodyMap) r.bodyMap = {};
@@ -721,6 +728,86 @@ function refchAddReferee(data) {
   refchState.referees.push(ref);
   refchSave();
   return ref;
+}
+
+function refchUpdateReferee(id, data) {
+  var ref = refchRefereeById(id);
+  if (!ref) return null;
+  ['name', 'country', 'flag', 'category', 'refType', 'age', 'status', 'hrMax'].forEach(function (key) {
+    if (data[key] !== undefined && data[key] !== null && data[key] !== '') ref[key] = data[key];
+  });
+  refchSave();
+  return ref;
+}
+
+/* ---------------- Settings: integrations, notifications, audit log ---------------- */
+
+var POLAR_SYNC_CATEGORIES = ['Aerobic Capacity', 'High Intensity', 'Recovery', 'Medium Intensity'];
+
+function refchConnectPolar(clientId) {
+  refchState.integrations.polar = { connected: true, clientId: clientId || 'polar-demo-client', lastSync: new Date().toISOString() };
+  refchSave();
+}
+
+function refchDisconnectPolar() {
+  refchState.integrations.polar.connected = false;
+  refchSave();
+}
+
+function refchSyncPolarNow(refereeId) {
+  var ref = refchRefereeById(refereeId);
+  if (!ref || !refchState.integrations.polar.connected) return null;
+
+  var category = POLAR_SYNC_CATEGORIES[Math.floor(Math.random() * POLAR_SYNC_CATEGORIES.length)];
+  var avgPct = 0.60 + Math.random() * 0.30;
+  var maxPct = Math.min(0.99, avgPct + 0.10 + Math.random() * 0.08);
+  var avgHR = Math.round(ref.hrMax * avgPct);
+  var maxHR = Math.round(ref.hrMax * maxPct);
+  var duration = 35 + Math.round(Math.random() * 45);
+
+  var session = refchAddTrainingSession({
+    refereeId: refereeId,
+    date: new Date().toISOString().slice(0, 10),
+    category: category,
+    durationMin: duration,
+    distanceKm: Math.round(duration * 0.14 * 10) / 10,
+    trainingLoad: Math.round(duration * (1.5 + avgPct)),
+    avgHR: avgHR,
+    maxHR: maxHR,
+    zones: { z1: Math.round(duration * 0.2), z2: Math.round(duration * 0.3), z3: Math.round(duration * 0.3), z4: Math.round(duration * 0.15), z5: Math.round(duration * 0.05) }
+  });
+
+  refchState.integrations.polar.lastSync = new Date().toISOString();
+  refchSave();
+  return session;
+}
+
+function refchSetNotificationPref(key, value) {
+  refchState.notificationPrefs[key] = value;
+  refchSave();
+}
+
+function refchAuditLog() {
+  var entries = [];
+  refchState.documents.forEach(function (d) {
+    entries.push({ timestamp: d.uploadedAt, text: 'Document uploaded: "' + d.name + '" (' + refchDocShareLabel(d.shareType, d.shareParams) + ')' });
+  });
+  refchState.messages.forEach(function (m) {
+    if (m.direction === 'outgoing') {
+      entries.push({ timestamp: m.sentAt, text: 'Message sent to ' + m.audienceLabel + ': "' + m.subject + '"' });
+    } else {
+      var sender = refchRefereeById(m.senderId);
+      entries.push({ timestamp: m.sentAt, text: 'Message received from ' + (sender ? sender.name : 'Unknown') + ': "' + m.subject + '"' });
+    }
+  });
+  refchState.trainingSessions.forEach(function (s) {
+    var ref = refchRefereeById(s.refereeId);
+    entries.push({ timestamp: s.date + 'T12:00:00.000Z', text: 'Training session logged for ' + (ref ? ref.name : 'Unknown') + ' — ' + s.category });
+  });
+  if (refchState.integrations.polar.lastSync) {
+    entries.push({ timestamp: refchState.integrations.polar.lastSync, text: 'Polar integration synced' });
+  }
+  return entries.sort(function (a, b) { return a.timestamp < b.timestamp ? 1 : -1; });
 }
 
 function refchAddOrganization(data) {

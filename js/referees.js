@@ -10,8 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {
   populateSelect(document.getElementById('filterStatus'), STATUSES, 'All Statuses');
   populateSelect(document.getElementById('rfCategory'), CATEGORIES);
   populateSelect(document.getElementById('rfStatus'), STATUSES);
+  populateSelect(document.getElementById('epCategory'), CATEGORIES);
+  populateSelect(document.getElementById('epStatus'), STATUSES);
 
   renderRefereeGrid();
+
+  var openId = new URLSearchParams(window.location.search).get('open');
+  if (openId && refchRefereeById(openId)) openRefDetail(openId);
 
   document.getElementById('refSearch').addEventListener('input', renderRefereeGrid);
   document.getElementById('filterCategory').addEventListener('change', renderRefereeGrid);
@@ -57,7 +62,96 @@ document.addEventListener('DOMContentLoaded', function () {
       showToast('Already assigned with that role.');
     }
   });
+
+  document.getElementById('rdPhoto').addEventListener('click', function () {
+    document.getElementById('rdPhotoInput').click();
+  });
+  document.getElementById('rdPhotoInput').addEventListener('change', function () {
+    var file = this.files[0];
+    if (!file || !activeDetailRefereeId) return;
+    if (file.type.indexOf('image/') !== 0) {
+      showToast('Please choose an image file.');
+      return;
+    }
+    idbPutFile('photo_' + activeDetailRefereeId, file).then(function () {
+      showToast('Photo updated.');
+      loadDetailPhoto(activeDetailRefereeId);
+      enhanceAvatarPhoto(activeDetailRefereeId);
+    });
+  });
+
+  document.getElementById('rdEditProfileBtn').addEventListener('click', function () {
+    if (!activeDetailRefereeId) return;
+    populateEditProfileForm(activeDetailRefereeId);
+    closeModal('refDetailModal');
+    openModal('editProfileModal');
+  });
+
+  document.getElementById('submitEditProfile').addEventListener('click', function () {
+    var id = document.getElementById('epId').value;
+    var name = document.getElementById('epName').value.trim();
+    var country = document.getElementById('epCountry').value.trim();
+    if (!id || !name || !country) {
+      showToast('Please fill in name and country.');
+      return;
+    }
+    refchUpdateReferee(id, {
+      name: name,
+      country: country,
+      flag: document.getElementById('epFlag').value.trim(),
+      category: document.getElementById('epCategory').value,
+      refType: document.getElementById('epType').value,
+      age: parseInt(document.getElementById('epAge').value, 10) || null,
+      status: document.getElementById('epStatus').value,
+      hrMax: parseInt(document.getElementById('epHrMax').value, 10) || null
+    });
+    closeModal('editProfileModal');
+    showToast('Profile updated.');
+    renderRefereeGrid();
+    openRefDetail(id);
+  });
 });
+
+function populateEditProfileForm(id) {
+  var r = refchRefereeById(id);
+  if (!r) return;
+  document.getElementById('epId').value = r.id;
+  document.getElementById('epName').value = r.name;
+  document.getElementById('epCountry').value = r.country;
+  document.getElementById('epFlag').value = r.flag || '';
+  document.getElementById('epCategory').value = r.category;
+  document.getElementById('epType').value = r.refType;
+  document.getElementById('epAge').value = r.age || '';
+  document.getElementById('epStatus').value = r.status;
+  document.getElementById('epHrMax').value = r.hrMax || '';
+}
+
+function loadDetailPhoto(id) {
+  var photoEl = document.getElementById('rdPhoto');
+  var initialsEl = document.getElementById('rdPhotoInitials');
+  idbGetFile('photo_' + id).then(function (blob) {
+    if (blob) {
+      photoEl.style.backgroundImage = 'url(' + URL.createObjectURL(blob) + ')';
+      initialsEl.style.display = 'none';
+    } else {
+      photoEl.style.backgroundImage = 'none';
+      initialsEl.style.display = 'block';
+    }
+  });
+}
+
+function enhanceAvatarPhoto(id) {
+  var el = document.getElementById('refAvatar_' + id);
+  if (!el) return;
+  idbGetFile('photo_' + id).then(function (blob) {
+    if (blob) {
+      el.style.backgroundImage = 'url(' + URL.createObjectURL(blob) + ')';
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+      el.textContent = '';
+    }
+  });
+}
 
 function populateSelect(el, values, allLabel) {
   if (!el) return;
@@ -116,7 +210,7 @@ function renderRefereeGrid() {
     return '' +
       '<div class="referee-card" data-id="' + r.id + '">' +
         '<div class="referee-card-top">' +
-          '<div class="avatar" style="background:' + r.color + '">' + refchInitials(r.name) + '</div>' +
+          '<div class="avatar" id="refAvatar_' + r.id + '" style="background:' + r.color + '">' + refchInitials(r.name) + '</div>' +
           '<div>' +
             '<div class="referee-card-name">' + r.name + ' <span class="flag">' + r.flag + '</span></div>' +
             '<div class="referee-card-sub">' + r.country + (r.age ? ' · Age ' + r.age : '') + '</div>' +
@@ -136,6 +230,8 @@ function renderRefereeGrid() {
       openRefDetail(card.getAttribute('data-id'));
     });
   });
+
+  list.forEach(function (r) { enhanceAvatarPhoto(r.id); });
 }
 
 function openRefDetail(id) {
@@ -150,6 +246,9 @@ function renderRefDetail(id) {
 
   document.getElementById('rdName').textContent = r.name + ' ' + r.flag;
   document.getElementById('rdMeta').textContent = r.country + ' · ' + r.category + ' · ' + r.refType + (r.age ? ' · Age ' + r.age : '');
+  document.getElementById('rdPhotoInitials').textContent = refchInitials(r.name);
+  document.getElementById('rdPhoto').style.backgroundImage = 'none';
+  loadDetailPhoto(id);
 
   var orgs = refchOrgsForReferee(id);
   var listEl = document.getElementById('rdOrgList');
