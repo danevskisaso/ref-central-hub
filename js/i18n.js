@@ -20,7 +20,7 @@ var LANGUAGES = [
 var TRANSLATIONS = {
   en: {
     grp_overview: 'Overview', grp_performance: 'Performance', grp_planning: 'Planning', grp_intelligence: 'Intelligence', grp_admin: 'Admin',
-    nav_dashboard: 'Dashboard', nav_referees: 'Referees', nav_training: 'Training', nav_match_analysis: 'Match Analysis',
+    nav_dashboard: 'Dashboard', nav_referees: 'Referees', nav_training: 'Training', nav_drills: 'Drills', nav_match_analysis: 'Match Analysis',
     nav_training_analysis: 'Training Analysis', nav_onfield_review: 'On-Field Review', nav_fitness_tests: 'Fitness Tests',
     nav_screening: 'Screening', nav_recommendations: 'Recommendations', nav_training_programmes: 'Training Programmes',
     nav_calendar: 'Calendar', nav_communication: 'Communication', nav_documents: 'Documents', nav_reports: 'Reports',
@@ -40,11 +40,13 @@ var TRANSLATIONS = {
     page_training_analysis_title: 'Training Analysis', page_training_analysis_sub: 'Eleven-metric monthly evaluation — consistency, load, HR intensity distribution, recovery balance and more.',
     page_settings_title: 'Settings', page_settings_sub: 'Integrations, personal preferences, organization and security.',
     btn_new_report: 'New Report', btn_add_referee: 'Add Referee', btn_add_organization: 'Add Organization', btn_add_result: 'Add Result',
-    btn_add_screening_result: 'Add Screening Result', btn_add_event: 'Add Event', btn_upload_share: 'Upload & Share', btn_log_session: 'Log Training Session'
+    btn_add_screening_result: 'Add Screening Result', btn_add_event: 'Add Event', btn_upload_share: 'Upload & Share', btn_log_session: 'Log Training Session',
+    page_drills_title: 'Drills', page_drills_sub: 'Design professional referee drills on a pitch canvas, or generate a training proposal from intensity and distance.',
+    btn_generate_training: 'Generate Training', btn_create_drill: 'Create new drill', modal_create_drill: 'Create new drill', modal_generator: 'Training Generator'
   },
   es: {
     grp_overview: 'Resumen', grp_performance: 'Rendimiento', grp_planning: 'Planificación', grp_intelligence: 'Inteligencia', grp_admin: 'Administración',
-    nav_dashboard: 'Panel', nav_referees: 'Árbitros', nav_training: 'Entrenamiento', nav_match_analysis: 'Análisis de Partido',
+    nav_dashboard: 'Panel', nav_referees: 'Árbitros', nav_training: 'Entrenamiento', nav_drills: 'Ejercicios', nav_match_analysis: 'Análisis de Partido',
     nav_training_analysis: 'Análisis de Entrenamiento', nav_onfield_review: 'Revisión en Campo', nav_fitness_tests: 'Pruebas Físicas',
     nav_screening: 'Evaluación Médica', nav_recommendations: 'Recomendaciones', nav_training_programmes: 'Programas de Entrenamiento',
     nav_calendar: 'Calendario', nav_communication: 'Comunicación', nav_documents: 'Documentos', nav_reports: 'Informes',
@@ -64,11 +66,13 @@ var TRANSLATIONS = {
     page_training_analysis_title: 'Análisis de Entrenamiento', page_training_analysis_sub: 'Evaluación mensual de once métricas — consistencia, carga, distribución de intensidad de FC, equilibrio de recuperación y más.',
     page_settings_title: 'Configuración', page_settings_sub: 'Integraciones, preferencias personales, organización y seguridad.',
     btn_new_report: 'Nuevo Informe', btn_add_referee: 'Añadir Árbitro', btn_add_organization: 'Añadir Organización', btn_add_result: 'Añadir Resultado',
-    btn_add_screening_result: 'Añadir Resultado de Evaluación', btn_add_event: 'Añadir Evento', btn_upload_share: 'Subir y Compartir', btn_log_session: 'Registrar Sesión de Entrenamiento'
+    btn_add_screening_result: 'Añadir Resultado de Evaluación', btn_add_event: 'Añadir Evento', btn_upload_share: 'Subir y Compartir', btn_log_session: 'Registrar Sesión de Entrenamiento',
+    page_drills_title: 'Ejercicios', page_drills_sub: 'Diseña ejercicios profesionales para árbitros sobre un campo, o genera una propuesta de entrenamiento a partir de la intensidad y la distancia.',
+    btn_generate_training: 'Generar Entrenamiento', btn_create_drill: 'Crear nuevo ejercicio', modal_create_drill: 'Crear nuevo ejercicio', modal_generator: 'Generador de Entrenamientos'
   },
   de: {
     grp_overview: 'Übersicht', grp_performance: 'Leistung', grp_planning: 'Planung', grp_intelligence: 'Analyse', grp_admin: 'Verwaltung',
-    nav_dashboard: 'Dashboard', nav_referees: 'Schiedsrichter', nav_training: 'Training', nav_match_analysis: 'Spielanalyse',
+    nav_dashboard: 'Dashboard', nav_referees: 'Schiedsrichter', nav_training: 'Training', nav_drills: 'Übungen', nav_match_analysis: 'Spielanalyse',
     nav_training_analysis: 'Trainingsanalyse', nav_onfield_review: 'Platzbegehung', nav_fitness_tests: 'Fitnesstests',
     nav_screening: 'Screening', nav_recommendations: 'Empfehlungen', nav_training_programmes: 'Trainingsprogramme',
     nav_calendar: 'Kalender', nav_communication: 'Kommunikation', nav_documents: 'Dokumente', nav_reports: 'Berichte',
@@ -88,11 +92,13 @@ var TRANSLATIONS = {
     page_training_analysis_title: 'Trainingsanalyse', page_training_analysis_sub: 'Monatliche Auswertung anhand von elf Kennzahlen — Konstanz, Belastung, HF-Intensitätsverteilung, Erholungsbalance und mehr.',
     page_settings_title: 'Einstellungen', page_settings_sub: 'Integrationen, persönliche Einstellungen, Organisation und Sicherheit.',
     btn_new_report: 'Neuer Bericht', btn_add_referee: 'Schiedsrichter hinzufügen', btn_add_organization: 'Organisation hinzufügen', btn_add_result: 'Ergebnis hinzufügen',
-    btn_add_screening_result: 'Screening-Ergebnis hinzufügen', btn_add_event: 'Termin hinzufügen', btn_upload_share: 'Hochladen & Teilen', btn_log_session: 'Trainingseinheit erfassen'
+    btn_add_screening_result: 'Screening-Ergebnis hinzufügen', btn_add_event: 'Termin hinzufügen', btn_upload_share: 'Hochladen & Teilen', btn_log_session: 'Trainingseinheit erfassen',
+    page_drills_title: 'Übungen', page_drills_sub: 'Entwerfen Sie professionelle Schiedsrichterübungen auf einem Spielfeld-Canvas oder erstellen Sie einen Trainingsvorschlag aus Intensität und Distanz.',
+    btn_generate_training: 'Training generieren', btn_create_drill: 'Neue Übung erstellen', modal_create_drill: 'Neue Übung erstellen', modal_generator: 'Trainingsgenerator'
   },
   fr: {
     grp_overview: 'Aperçu', grp_performance: 'Performance', grp_planning: 'Planification', grp_intelligence: 'Intelligence', grp_admin: 'Administration',
-    nav_dashboard: 'Tableau de bord', nav_referees: 'Arbitres', nav_training: 'Entraînement', nav_match_analysis: 'Analyse de Match',
+    nav_dashboard: 'Tableau de bord', nav_referees: 'Arbitres', nav_training: 'Entraînement', nav_drills: 'Exercices', nav_match_analysis: 'Analyse de Match',
     nav_training_analysis: "Analyse d'Entraînement", nav_onfield_review: 'Revue sur le Terrain', nav_fitness_tests: 'Tests Physiques',
     nav_screening: 'Dépistage', nav_recommendations: 'Recommandations', nav_training_programmes: "Programmes d'Entraînement",
     nav_calendar: 'Calendrier', nav_communication: 'Communication', nav_documents: 'Documents', nav_reports: 'Rapports',
@@ -112,11 +118,13 @@ var TRANSLATIONS = {
     page_training_analysis_title: "Analyse d'Entraînement", page_training_analysis_sub: "Évaluation mensuelle en onze indicateurs — régularité, charge, répartition de l'intensité cardiaque, équilibre de récupération et plus encore.",
     page_settings_title: 'Paramètres', page_settings_sub: 'Intégrations, préférences personnelles, organisation et sécurité.',
     btn_new_report: 'Nouveau Rapport', btn_add_referee: 'Ajouter un Arbitre', btn_add_organization: 'Ajouter une Organisation', btn_add_result: 'Ajouter un Résultat',
-    btn_add_screening_result: 'Ajouter un Résultat de Dépistage', btn_add_event: 'Ajouter un Événement', btn_upload_share: 'Téléverser et Partager', btn_log_session: 'Enregistrer une Séance'
+    btn_add_screening_result: 'Ajouter un Résultat de Dépistage', btn_add_event: 'Ajouter un Événement', btn_upload_share: 'Téléverser et Partager', btn_log_session: 'Enregistrer une Séance',
+    page_drills_title: 'Exercices', page_drills_sub: "Concevez des exercices professionnels pour arbitres sur un terrain, ou générez une proposition d'entraînement à partir de l'intensité et de la distance.",
+    btn_generate_training: 'Générer un Entraînement', btn_create_drill: 'Créer un nouvel exercice', modal_create_drill: 'Créer un nouvel exercice', modal_generator: "Générateur d'Entraînement"
   },
   pt: {
     grp_overview: 'Visão Geral', grp_performance: 'Desempenho', grp_planning: 'Planeamento', grp_intelligence: 'Inteligência', grp_admin: 'Administração',
-    nav_dashboard: 'Painel', nav_referees: 'Árbitros', nav_training: 'Treino', nav_match_analysis: 'Análise de Jogo',
+    nav_dashboard: 'Painel', nav_referees: 'Árbitros', nav_training: 'Treino', nav_drills: 'Exercícios', nav_match_analysis: 'Análise de Jogo',
     nav_training_analysis: 'Análise de Treino', nav_onfield_review: 'Revisão em Campo', nav_fitness_tests: 'Testes Físicos',
     nav_screening: 'Rastreio', nav_recommendations: 'Recomendações', nav_training_programmes: 'Programas de Treino',
     nav_calendar: 'Calendário', nav_communication: 'Comunicação', nav_documents: 'Documentos', nav_reports: 'Relatórios',
@@ -136,11 +144,13 @@ var TRANSLATIONS = {
     page_training_analysis_title: 'Análise de Treino', page_training_analysis_sub: 'Avaliação mensal com onze métricas — consistência, carga, distribuição de intensidade de FC, equilíbrio de recuperação e mais.',
     page_settings_title: 'Definições', page_settings_sub: 'Integrações, preferências pessoais, organização e segurança.',
     btn_new_report: 'Novo Relatório', btn_add_referee: 'Adicionar Árbitro', btn_add_organization: 'Adicionar Organização', btn_add_result: 'Adicionar Resultado',
-    btn_add_screening_result: 'Adicionar Resultado de Rastreio', btn_add_event: 'Adicionar Evento', btn_upload_share: 'Carregar e Partilhar', btn_log_session: 'Registar Sessão de Treino'
+    btn_add_screening_result: 'Adicionar Resultado de Rastreio', btn_add_event: 'Adicionar Evento', btn_upload_share: 'Carregar e Partilhar', btn_log_session: 'Registar Sessão de Treino',
+    page_drills_title: 'Exercícios', page_drills_sub: 'Crie exercícios profissionais para árbitros num campo, ou gere uma proposta de treino a partir da intensidade e distância.',
+    btn_generate_training: 'Gerar Treino', btn_create_drill: 'Criar novo exercício', modal_create_drill: 'Criar novo exercício', modal_generator: 'Gerador de Treino'
   },
   it: {
     grp_overview: 'Panoramica', grp_performance: 'Prestazione', grp_planning: 'Pianificazione', grp_intelligence: 'Intelligence', grp_admin: 'Amministrazione',
-    nav_dashboard: 'Dashboard', nav_referees: 'Arbitri', nav_training: 'Allenamento', nav_match_analysis: 'Analisi Partita',
+    nav_dashboard: 'Dashboard', nav_referees: 'Arbitri', nav_training: 'Allenamento', nav_drills: 'Esercizi', nav_match_analysis: 'Analisi Partita',
     nav_training_analysis: 'Analisi Allenamento', nav_onfield_review: 'Revisione sul Campo', nav_fitness_tests: 'Test Fisici',
     nav_screening: 'Screening', nav_recommendations: 'Raccomandazioni', nav_training_programmes: 'Programmi di Allenamento',
     nav_calendar: 'Calendario', nav_communication: 'Comunicazione', nav_documents: 'Documenti', nav_reports: 'Report',
@@ -160,11 +170,13 @@ var TRANSLATIONS = {
     page_training_analysis_title: 'Analisi Allenamento', page_training_analysis_sub: "Valutazione mensile su undici metriche — costanza, carico, distribuzione dell'intensità cardiaca, equilibrio di recupero e altro.",
     page_settings_title: 'Impostazioni', page_settings_sub: 'Integrazioni, preferenze personali, organizzazione e sicurezza.',
     btn_new_report: 'Nuovo Report', btn_add_referee: 'Aggiungi Arbitro', btn_add_organization: 'Aggiungi Organizzazione', btn_add_result: 'Aggiungi Risultato',
-    btn_add_screening_result: 'Aggiungi Risultato Screening', btn_add_event: 'Aggiungi Evento', btn_upload_share: 'Carica e Condividi', btn_log_session: 'Registra Sessione'
+    btn_add_screening_result: 'Aggiungi Risultato Screening', btn_add_event: 'Aggiungi Evento', btn_upload_share: 'Carica e Condividi', btn_log_session: 'Registra Sessione',
+    page_drills_title: 'Esercizi', page_drills_sub: 'Progetta esercizi professionali per arbitri su un campo, oppure genera una proposta di allenamento da intensità e distanza.',
+    btn_generate_training: 'Genera Allenamento', btn_create_drill: 'Crea nuovo esercizio', modal_create_drill: 'Crea nuovo esercizio', modal_generator: 'Generatore di Allenamento'
   },
   nl: {
     grp_overview: 'Overzicht', grp_performance: 'Prestatie', grp_planning: 'Planning', grp_intelligence: 'Intelligence', grp_admin: 'Beheer',
-    nav_dashboard: 'Dashboard', nav_referees: 'Scheidsrechters', nav_training: 'Training', nav_match_analysis: 'Wedstrijdanalyse',
+    nav_dashboard: 'Dashboard', nav_referees: 'Scheidsrechters', nav_training: 'Training', nav_drills: 'Oefeningen', nav_match_analysis: 'Wedstrijdanalyse',
     nav_training_analysis: 'Trainingsanalyse', nav_onfield_review: 'Veldbeoordeling', nav_fitness_tests: 'Fitheidstests',
     nav_screening: 'Screening', nav_recommendations: 'Aanbevelingen', nav_training_programmes: "Trainingsprogramma's",
     nav_calendar: 'Kalender', nav_communication: 'Communicatie', nav_documents: 'Documenten', nav_reports: 'Rapporten',
@@ -184,11 +196,13 @@ var TRANSLATIONS = {
     page_training_analysis_title: 'Trainingsanalyse', page_training_analysis_sub: 'Maandelijkse evaluatie op elf meetwaarden — consistentie, belasting, HF-intensiteitsverdeling, herstelbalans en meer.',
     page_settings_title: 'Instellingen', page_settings_sub: 'Integraties, persoonlijke voorkeuren, organisatie en beveiliging.',
     btn_new_report: 'Nieuw Rapport', btn_add_referee: 'Scheidsrechter Toevoegen', btn_add_organization: 'Organisatie Toevoegen', btn_add_result: 'Resultaat Toevoegen',
-    btn_add_screening_result: 'Screeningresultaat Toevoegen', btn_add_event: 'Gebeurtenis Toevoegen', btn_upload_share: 'Uploaden & Delen', btn_log_session: 'Trainingssessie Registreren'
+    btn_add_screening_result: 'Screeningresultaat Toevoegen', btn_add_event: 'Gebeurtenis Toevoegen', btn_upload_share: 'Uploaden & Delen', btn_log_session: 'Trainingssessie Registreren',
+    page_drills_title: 'Oefeningen', page_drills_sub: 'Ontwerp professionele scheidsrechtersoefeningen op een veldcanvas, of genereer een trainingsvoorstel op basis van intensiteit en afstand.',
+    btn_generate_training: 'Training Genereren', btn_create_drill: 'Nieuwe oefening maken', modal_create_drill: 'Nieuwe oefening maken', modal_generator: 'Trainingsgenerator'
   },
   pl: {
     grp_overview: 'Przegląd', grp_performance: 'Wydajność', grp_planning: 'Planowanie', grp_intelligence: 'Analityka', grp_admin: 'Administracja',
-    nav_dashboard: 'Panel', nav_referees: 'Sędziowie', nav_training: 'Trening', nav_match_analysis: 'Analiza Meczu',
+    nav_dashboard: 'Panel', nav_referees: 'Sędziowie', nav_training: 'Trening', nav_drills: 'Ćwiczenia', nav_match_analysis: 'Analiza Meczu',
     nav_training_analysis: 'Analiza Treningu', nav_onfield_review: 'Przegląd na Boisku', nav_fitness_tests: 'Testy Sprawnościowe',
     nav_screening: 'Badania Przesiewowe', nav_recommendations: 'Rekomendacje', nav_training_programmes: 'Programy Treningowe',
     nav_calendar: 'Kalendarz', nav_communication: 'Komunikacja', nav_documents: 'Dokumenty', nav_reports: 'Raporty',
@@ -208,7 +222,9 @@ var TRANSLATIONS = {
     page_training_analysis_title: 'Analiza Treningu', page_training_analysis_sub: 'Comiesięczna ocena w jedenastu wskaźnikach — regularność, obciążenie, rozkład intensywności HR, równowaga regeneracji i więcej.',
     page_settings_title: 'Ustawienia', page_settings_sub: 'Integracje, preferencje osobiste, organizacja i bezpieczeństwo.',
     btn_new_report: 'Nowy Raport', btn_add_referee: 'Dodaj Sędziego', btn_add_organization: 'Dodaj Organizację', btn_add_result: 'Dodaj Wynik',
-    btn_add_screening_result: 'Dodaj Wynik Badania', btn_add_event: 'Dodaj Wydarzenie', btn_upload_share: 'Prześlij i Udostępnij', btn_log_session: 'Zarejestruj Sesję Treningową'
+    btn_add_screening_result: 'Dodaj Wynik Badania', btn_add_event: 'Dodaj Wydarzenie', btn_upload_share: 'Prześlij i Udostępnij', btn_log_session: 'Zarejestruj Sesję Treningową',
+    page_drills_title: 'Ćwiczenia', page_drills_sub: 'Projektuj profesjonalne ćwiczenia dla sędziów na boisku, albo wygeneruj propozycję treningu na podstawie intensywności i dystansu.',
+    btn_generate_training: 'Generuj Trening', btn_create_drill: 'Utwórz nowe ćwiczenie', modal_create_drill: 'Utwórz nowe ćwiczenie', modal_generator: 'Generator Treningów'
   }
 };
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Documents — Ref Central Hub</title>
+<title>Drills — Ref Central Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -12,7 +12,8 @@
 <link rel="stylesheet" href="css/referees.css">
 <link rel="stylesheet" href="css/fitness.css">
 <link rel="stylesheet" href="css/communication.css">
-<link rel="stylesheet" href="css/documents.css">
+<link rel="stylesheet" href="css/settings.css">
+<link rel="stylesheet" href="css/drills.css">
 </head>
 <body class="app-body">
 
@@ -50,7 +51,7 @@
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 17l4.5-6 3.5 3.5L15.5 6l2.5 3"/></svg></span>
         <span class="nav-text" data-i18n="nav_training">Training</span>
       </a>
-      <a class="nav-item" href="drills.html">
+      <a class="nav-item active" href="drills.html">
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><path d="M5 14c2-4 4-4 6-8" stroke-linecap="round"/><path d="M11 6l1.3-.3-.3 1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="6" r="1.1" fill="currentColor" stroke="none"/></svg></span>
         <span class="nav-text" data-i18n="nav_drills">Drills</span>
       </a>
@@ -94,7 +95,7 @@
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 4.5h15v9h-9L4 16.5v-3H2.5z"/></svg></span>
         <span class="nav-text" data-i18n="nav_communication">Communication</span>
       </a>
-      <a class="nav-item active" href="documents.html">
+      <a class="nav-item" href="documents.html">
         <span class="nav-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 2.5h6l4 4v10.5H5z"/><path d="M11 2.5v4h4M7.5 11h5M7.5 13.5h5"/></svg></span>
         <span class="nav-text" data-i18n="nav_documents">Documents</span>
       </a>
@@ -153,7 +154,7 @@
     </button>
     <div class="search-box">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input type="text" id="docSearch" placeholder="Search documents…" data-i18n-placeholder="search_placeholder_documents">
+      <input type="text" placeholder="Search referees, matches, reports…" data-i18n-placeholder="search_placeholder_default">
     </div>
     <div class="topbar-spacer"></div>
     <div class="topbar-actions">
@@ -175,66 +176,178 @@
   <main class="content">
     <div class="page-head">
       <div>
-        <h1 data-i18n="page_documents_title">Documents</h1>
-        <p class="page-sub" data-i18n="page_documents_sub">Upload PDF, JPEG, Excel or Word files and choose exactly who can see them — or publish to the general library for everyone.</p>
+        <h1 data-i18n="page_drills_title">Drills</h1>
+        <p class="page-sub" data-i18n="page_drills_sub">Design professional referee drills on a pitch canvas, or generate a training proposal from intensity and distance.</p>
       </div>
-    </div>
-
-    <div class="kpi-grid" id="docKpis" style="grid-template-columns:repeat(4,1fr);"></div>
-
-    <div class="doc-layout">
-      <!-- Upload -->
-      <div class="card card-pad">
-        <div class="card-head">
-          <div class="card-title">Upload Document</div>
-        </div>
-        <div class="dropzone" id="dropzone">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M12 3l-4 4M12 3l4 4"/><path d="M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4"/></svg>
-          <div class="dz-title">Click to choose a file</div>
-          <div class="dz-sub">PDF, JPEG, Excel (.xls/.xlsx) or Word (.doc/.docx)</div>
-          <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.xls,.xlsx,.csv,.doc,.docx" hidden>
-        </div>
-        <div class="selected-file" id="selectedFile" style="display:none;"></div>
-
-        <div class="form-field" style="margin-top:14px;">
-          <label for="shareType">Share with</label>
-          <select id="shareType"></select>
-        </div>
-        <div class="form-field" id="shareOrgWrap" style="display:none;">
-          <label for="shareOrg">Organization</label>
-          <select id="shareOrg"></select>
-        </div>
-        <div class="form-field" id="shareRoleWrap" style="display:none;">
-          <label for="shareRole">Role</label>
-          <select id="shareRole"></select>
-        </div>
-        <div class="form-field" id="shareRefWrap" style="display:none;">
-          <label for="shareRef">Referee</label>
-          <select id="shareRef"></select>
-        </div>
-        <div class="audience-preview" id="sharePreview"></div>
-
-        <button class="btn btn-primary btn-block" id="uploadBtn" disabled>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M12 15V3M12 3l-4 4M12 3l4 4"/><path d="M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4"/></svg>
-          <span data-i18n="btn_upload_share">Upload &amp; Share</span>
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-ghost" id="openGenerator">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+          <span data-i18n="btn_generate_training">Generate Training</span>
         </button>
-        <div class="form-hint">Files are stored in this browser only (IndexedDB) — not uploaded to any server, and not visible on other devices.</div>
-      </div>
-
-      <!-- List -->
-      <div class="card card-pad">
-        <div class="card-head">
-          <div class="card-title" id="docListTitle">All Documents</div>
-        </div>
-        <div class="doc-tabs" id="docTabs"></div>
-        <div class="filter-row" style="margin-bottom:14px;">
-          <select class="filter-select" id="filterFileType"><option value="">All File Types</option></select>
-          <div class="filter-count" id="docCount"></div>
-        </div>
-        <div class="doc-list" id="docList"></div>
+        <button class="btn btn-primary" id="openCreateDrill">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          <span data-i18n="btn_create_drill">Create new drill</span>
+        </button>
       </div>
     </div>
+
+    <!-- Toolbar row -->
+    <div class="drill-toolbar">
+      <div class="drill-search"><input type="text" id="drillSearchPlayer" placeholder="Search by player">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="drill-search"><input type="text" id="drillFilterCoach" placeholder="Filter by coaches">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <a href="#" class="drill-filters-link">Filters</a>
+    </div>
+    <div class="drill-subbar">
+      <span class="drill-dept-chip">Methodology Department<span class="drill-custom-tag">Custom</span></span>
+      <label class="switch"><input type="checkbox" id="onlyMyDrills"><span class="switch-track"></span></label>
+      <span class="drill-toggle-label">Show only my drills</span>
+    </div>
+
+    <div class="drill-grid" id="drillGrid"></div>
   </main>
+</div>
+
+<!-- ===== Create Drill — full screen overlay ===== -->
+<div class="modal-overlay" id="createDrillModal">
+  <div class="drill-modal">
+
+    <!-- Step 1: Teams + Field -->
+    <div id="drillStep1">
+      <div class="drill-modal-head">
+        <h3 data-i18n="modal_create_drill">Create new drill</h3>
+        <button class="modal-close" data-close-modal><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="drill-modal-body">
+        <div class="drill-section">
+          <div class="drill-section-title">Teams</div>
+          <div class="tag-input" id="teamsTagInput">
+            <input type="text" id="teamsInput" placeholder="Select teams — type and press Enter">
+          </div>
+        </div>
+
+        <div class="drill-section">
+          <div class="drill-section-head">
+            <div class="drill-section-title">Field</div>
+            <div class="drill-section-controls">
+              <div class="seg-control">
+                <button class="seg-btn active" id="bgGreenBtn">Green</button>
+                <button class="seg-btn" id="bgWhiteBtn">White</button>
+              </div>
+              <span class="drill-toggle-label">Perspective</span>
+              <label class="switch"><input type="checkbox" id="perspectiveToggle" checked><span class="switch-track"></span></label>
+            </div>
+          </div>
+          <div class="field-grid" id="fieldGrid"></div>
+        </div>
+      </div>
+      <div class="drill-modal-foot">
+        <button class="btn btn-primary btn-wide" id="createDrillBtn" disabled>Create</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Editor -->
+    <div id="drillStep2" style="display:none;">
+      <div class="editor-topbar">
+        <h3 data-i18n="modal_create_drill">Create new drill</h3>
+        <button class="modal-close" data-close-modal><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="editor-body">
+        <div class="editor-main">
+          <div class="editor-toolbar">
+            <button class="tool-btn active" data-tool="select" title="Select"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3l7 17 2-7 7-2z"/></svg></button>
+            <button class="tool-btn" data-tool="line" title="Line"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 19L19 5"/></svg></button>
+            <button class="tool-btn" data-tool="arrow" title="Arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19L19 5M19 5h-7M19 5v7"/></svg></button>
+            <button class="tool-btn" data-tool="dashed" title="Dashed Arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 3"><path d="M5 19L19 5"/></svg></button>
+            <button class="tool-btn" data-tool="zigzag" title="Change-of-direction Run"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19l4-6 4 4 4-10 4 4"/></svg></button>
+            <button class="tool-btn" data-tool="rect" title="Rectangle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button>
+            <button class="tool-btn" data-tool="circle" title="Circle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/></svg></button>
+            <button class="tool-btn" data-tool="text" title="Text"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14M12 5v14"/></svg></button>
+            <button class="tool-btn" data-tool="pencil" title="Freehand"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l3-1 11-11-2-2L4 18z"/><path d="M14 6l2 2"/></svg></button>
+            <span class="tool-color-swatch" id="toolColorSwatch" title="Draw color"></span>
+            <input type="color" id="toolColorInput" class="hidden-color-input">
+            <span class="toolbar-sep"></span>
+            <button class="tool-btn" id="undoBtn" title="Undo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h10a5 5 0 010 10H9"/><path d="M8 5L3 10l5 5"/></svg></button>
+            <button class="tool-btn" id="redoBtn" title="Redo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10H11a5 5 0 000 10h4"/><path d="M16 5l5 5-5 5"/></svg></button>
+            <button class="tool-btn" id="deleteSelectedBtn" title="Delete selected"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0l-1 14a1 1 0 01-1 1H7a1 1 0 01-1-1L5 6"/></svg></button>
+            <button class="tool-btn" id="clearAllBtn" title="Clear all"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 6L5 18M5 6l14 12"/></svg></button>
+            <span class="toolbar-sep"></span>
+            <button class="btn btn-primary" id="saveDrillBtn" style="padding:7px 16px;font-size:12.5px;">Save Drill</button>
+          </div>
+          <div class="editor-canvas-wrap">
+            <svg id="drillCanvas" class="drill-canvas" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"></svg>
+          </div>
+        </div>
+
+        <div class="editor-side">
+          <div class="editor-side-tabs" id="editorTabs"></div>
+          <div class="editor-side-body" id="editorTabBody"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== Training Generator modal ===== -->
+<div class="modal-overlay" id="generatorModal">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-head">
+      <div>
+        <h3 data-i18n="modal_generator">Training Generator</h3>
+        <p>Pick an intensity, give a distance, reps and rest — get a proposed session.</p>
+      </div>
+      <button class="modal-close" data-close-modal><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label for="genType">Intensity type</label>
+        <select id="genType"></select>
+      </div>
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="genDistance">Distance per rep (m)</label>
+          <input type="number" id="genDistance" min="5" value="30">
+        </div>
+        <div class="form-field">
+          <label for="genReps">Number of reps (turns)</label>
+          <input type="number" id="genReps" min="1" value="8">
+        </div>
+        <div class="form-field full">
+          <label for="genRest">Rest between reps (seconds)</label>
+          <input type="number" id="genRest" min="0" value="60">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" id="runGeneratorBtn">Generate Proposal</button>
+
+      <div id="generatorResult" style="display:none;">
+        <div class="generator-result-card">
+          <div class="generator-result-title" id="genResultTitle">—</div>
+          <div class="generator-stat-grid">
+            <div class="generator-stat"><div class="num tabular" id="genTotalDistance">—</div><div class="lbl">Total Distance</div></div>
+            <div class="generator-stat"><div class="num tabular" id="genDuration">—</div><div class="lbl">Est. Duration</div></div>
+            <div class="generator-stat"><div class="num tabular" id="genLoad">—</div><div class="lbl">Est. Load (AU)</div></div>
+            <div class="generator-stat"><div class="num tabular" id="genRatio">—</div><div class="lbl">Work:Rest</div></div>
+          </div>
+          <div class="generator-note" id="genNote"></div>
+        </div>
+        <div class="form-field" style="margin-top:14px;">
+          <label for="genReferee">Save for referee</label>
+          <select id="genReferee"></select>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-ghost" id="genSaveSessionBtn" style="flex:1;">Save as Training Session</button>
+          <button class="btn btn-ghost" id="genAddCalendarBtn" style="flex:1;">Add to Calendar</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close-modal>Close</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -242,6 +355,6 @@
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
 <script src="js/i18n.js"></script>
-<script src="js/documents.js"></script>
+<script src="js/drills.js"></script>
 </body>
 </html>

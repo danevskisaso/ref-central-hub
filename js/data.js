@@ -652,7 +652,8 @@ function refchSeed() {
     referees: referees, organizations: organizations, fitnessResults: fitnessResults, screeningResults: screeningResults,
     events: events, messages: messages, documents: [], trainingSessions: trainingSessions,
     integrations: { polar: { connected: false, clientId: '', lastSync: null } },
-    notificationPrefs: { matchAssignments: true, trainingReminders: true, alerts: true, weeklyDigest: false }
+    notificationPrefs: { matchAssignments: true, trainingReminders: true, alerts: true, weeklyDigest: false },
+    drills: []
   };
 }
 
@@ -665,6 +666,7 @@ function refchMigrate(state) {
   if (!state.trainingSessions) state.trainingSessions = [];
   if (!state.integrations) state.integrations = { polar: { connected: false, clientId: '', lastSync: null } };
   if (!state.notificationPrefs) state.notificationPrefs = { matchAssignments: true, trainingReminders: true, alerts: true, weeklyDigest: false };
+  if (!state.drills) state.drills = [];
   state.referees.forEach(function (r) {
     if (!r.anthro) r.anthro = { height: null, weight: null, bodyFat: null };
     if (!r.bodyMap) r.bodyMap = {};
@@ -808,6 +810,155 @@ function refchAuditLog() {
     entries.push({ timestamp: refchState.integrations.polar.lastSync, text: 'Polar integration synced' });
   }
   return entries.sort(function (a, b) { return a.timestamp < b.timestamp ? 1 : -1; });
+}
+
+/* ---------------- Drills ----------------
+   Movement-type color convention (used for runner icons and the
+   drawing-tool palette): sprint/high-intensity = red, sideways =
+   yellow, backward = white, jogging = green, medium intensity = blue. */
+
+var MOVEMENT_COLORS = {
+  sprint: '#E63946',
+  sideways: '#FFC928',
+  backward: '#FFFFFF',
+  jog: '#18A558',
+  medium: '#1473E6'
+};
+
+var DRILL_FIELD_TYPES = [
+  { id: 'full', label: 'Full Pitch' },
+  { id: 'half_h', label: 'Half Pitch' },
+  { id: 'half_v1', label: 'Attacking Third' },
+  { id: 'half_v2', label: 'Defending Third' },
+  { id: 'goal_area', label: 'Goal Area' },
+  { id: 'final_third', label: 'Final Third' },
+  { id: 'grid', label: 'Practice Grid' },
+  { id: 'free', label: 'Blank Area' }
+];
+
+var DRILL_EQUIPMENT = [
+  { id: 'ball', label: 'Ball', category: 'Balls', colorable: false },
+  { id: 'cone', label: 'Flat Cone', category: 'Cones', colorable: true },
+  { id: 'cone_tall', label: 'Tall Cone', category: 'Cones', colorable: true },
+  { id: 'flag', label: 'Flag', category: 'Flags & Sticks', colorable: true },
+  { id: 'stick', label: 'Stick', category: 'Flags & Sticks', colorable: true },
+  { id: 'cone_stick', label: 'Cone Stick', category: 'Flags & Sticks', colorable: true },
+  { id: 'dummy', label: 'Dummy', category: 'Dummies', colorable: true },
+  { id: 'hurdle', label: 'Hurdle', category: 'Hurdles', colorable: true },
+  { id: 'hurdle_bar', label: 'Hurdle Bar', category: 'Hurdles', colorable: true },
+  { id: 'hoop', label: 'Hoop', category: 'Hoops', colorable: true },
+  { id: 'hoop_oval', label: 'Hoop (Oval)', category: 'Hoops', colorable: true },
+  { id: 'ladder', label: 'Agility Ladder', category: 'Other', colorable: false },
+  { id: 'box_small', label: 'Small Box', category: 'Other', colorable: false },
+  { id: 'box_long', label: 'Bench', category: 'Other', colorable: false },
+  { id: 'mat', label: 'Mat', category: 'Other', colorable: false },
+  { id: 'goal_small', label: 'Mini Goal', category: 'Other', colorable: false }
+];
+
+var DRILL_FIGURES = [
+  { id: 'referee', label: 'Referee', category: 'Officials', colorable: false },
+  { id: 'assistant_referee', label: 'Assistant Referee', category: 'Officials', colorable: false },
+  { id: 'coach', label: 'Coach', category: 'Staff', colorable: true },
+  { id: 'goalkeeper', label: 'Goalkeeper', category: 'Staff', colorable: true },
+  { id: 'runner_sprint', label: 'Sprint', category: 'Movement', colorable: false, color: MOVEMENT_COLORS.sprint },
+  { id: 'runner_jog', label: 'Jog', category: 'Movement', colorable: false, color: MOVEMENT_COLORS.jog },
+  { id: 'runner_sideways', label: 'Sideways', category: 'Movement', colorable: false, color: MOVEMENT_COLORS.sideways },
+  { id: 'runner_backward', label: 'Backward', category: 'Movement', colorable: false, color: MOVEMENT_COLORS.backward },
+  { id: 'runner_medium', label: 'Medium Intensity', category: 'Movement', colorable: false, color: MOVEMENT_COLORS.medium }
+];
+
+function refchAddDrill(data) {
+  var drill = {
+    id: refchUid('drill'),
+    name: data.name || 'Untitled Drill',
+    teams: data.teams || [],
+    fieldType: data.fieldType,
+    perspective: !!data.perspective,
+    background: data.background || 'green',
+    elements: data.elements || [],
+    createdAt: new Date().toISOString(),
+    createdBy: ME.name
+  };
+  refchState.drills.push(drill);
+  refchSave();
+  return drill;
+}
+
+function refchUpdateDrill(id, data) {
+  var drill = refchState.drills.filter(function (d) { return d.id === id; })[0];
+  if (!drill) return null;
+  ['name', 'teams', 'fieldType', 'perspective', 'background', 'elements'].forEach(function (key) {
+    if (data[key] !== undefined) drill[key] = data[key];
+  });
+  refchSave();
+  return drill;
+}
+
+function refchRemoveDrill(id) {
+  refchState.drills = refchState.drills.filter(function (d) { return d.id !== id; });
+  refchSave();
+}
+
+function refchDrillsFor(filters) {
+  filters = filters || {};
+  var q = (filters.query || '').toLowerCase();
+  return refchState.drills
+    .filter(function (d) { return !q || d.name.toLowerCase().indexOf(q) !== -1; })
+    .sort(function (a, b) { return a.createdAt < b.createdAt ? 1 : -1; });
+}
+
+/* ---------------- Training Generator ----------------
+   Produces a proposed session structure from intensity type + distance/
+   reps/rest. Pace assumptions are labeled as estimates, not clinical
+   standards — same caution as the fitness-test benchmarks. */
+
+var GENERATOR_TYPES = [
+  { id: 'high_intensity', label: 'High Intensity', category: 'High Intensity', paceMs: 6.2, loadFactor: 1.9 },
+  { id: 'rsa', label: 'Repeated Sprint Ability', category: 'Repeated Sprint Ability', paceMs: 7.0, loadFactor: 2.1 },
+  { id: 'medium_intensity', label: 'Medium Intensity', category: 'Medium Intensity', paceMs: 4.2, loadFactor: 1.3 },
+  { id: 'tempo', label: 'Tempo Running', category: 'Tempo Running', paceMs: 3.6, loadFactor: 1.1 }
+];
+
+function refchGeneratorTypeById(id) {
+  return GENERATOR_TYPES.filter(function (t) { return t.id === id; })[0];
+}
+
+function refchGenerateTrainingProposal(params) {
+  var type = refchGeneratorTypeById(params.type);
+  var distance = params.distance;
+  var reps = params.reps;
+  var restSec = params.restSec;
+
+  var workTimePerRep = distance / type.paceMs;
+  var totalWorkSec = workTimePerRep * reps;
+  var totalRestSec = restSec * Math.max(0, reps - 1);
+  var totalDurationMin = Math.round((totalWorkSec + totalRestSec) / 60 * 10) / 10;
+  var totalDistance = distance * reps;
+  var estimatedLoad = Math.round(totalWorkSec / 60 * type.loadFactor * 10);
+
+  var ratio = restSec > 0 ? Math.round((restSec / workTimePerRep) * 10) / 10 : 0;
+  var ratioText = '1:' + ratio;
+  var ratioNote;
+  if (type.id === 'high_intensity' || type.id === 'rsa') {
+    ratioNote = ratio >= 3 ? 'Good recovery ratio for repeated high-intensity efforts.' : 'Rest may be short for full recovery between maximal efforts — consider increasing.';
+  } else {
+    ratioNote = ratio >= 1 ? 'Reasonable work:rest balance for this intensity.' : 'Rest is short relative to work — acceptable for tempo/aerobic development.';
+  }
+
+  return {
+    type: type,
+    distance: distance,
+    reps: reps,
+    restSec: restSec,
+    workTimePerRep: Math.round(workTimePerRep * 10) / 10,
+    totalWorkSec: Math.round(totalWorkSec),
+    totalRestSec: totalRestSec,
+    totalDurationMin: totalDurationMin,
+    totalDistance: totalDistance,
+    estimatedLoad: estimatedLoad,
+    workRestRatio: ratioText,
+    ratioNote: ratioNote
+  };
 }
 
 function refchAddOrganization(data) {
