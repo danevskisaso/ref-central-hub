@@ -168,9 +168,10 @@ function renderFieldGrid() {
   var grid = document.getElementById('fieldGrid');
   grid.innerHTML = DRILL_FIELD_TYPES.map(function (f) {
     var selected = f.id === selectedFieldType;
-    var style = selectedPerspective ? ' style="transform:perspective(500px) rotateX(28deg); transform-origin:center bottom;"' : '';
+    var viewBox = selectedPerspective ? '0 0 320 175' : '0 0 160 120';
+    var inner = selectedPerspective ? buildIsoPitch(f.id, selectedBackground) : pitchMarkupFor(f.id, selectedBackground);
     return '<div class="field-card' + (selected ? ' selected' : '') + '" data-field="' + f.id + '">' +
-      '<svg viewBox="0 0 160 120"' + style + '>' + pitchMarkupFor(f.id, selectedBackground) + '</svg>' +
+      '<svg viewBox="' + viewBox + '">' + inner + '</svg>' +
     '</div>';
   }).join('');
 
@@ -183,7 +184,131 @@ function renderFieldGrid() {
   });
 }
 
-/* ================= PITCH RENDERING ================= */
+/* ================= ISOMETRIC PITCH CARD (field picker only) ================
+   Real bilinear trapezoid projection — not a CSS 3D hack — so the "3D card"
+   look matches the reference exactly and scales cleanly at any size. Only
+   used for the field-shape picker thumbnails: the live editing canvas and
+   saved-drill thumbnails stay flat/orthographic on purpose, since placed
+   elements are stored in flat canvas coordinates and a trapezoid background
+   would make precise placement/drag math far more complex for little gain. */
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function isoMapPt(corners, u, v) {
+  var topX = lerp(corners.TL.x, corners.TR.x, u), topY = lerp(corners.TL.y, corners.TR.y, u);
+  var botX = lerp(corners.BL.x, corners.BR.x, u), botY = lerp(corners.BL.y, corners.BR.y, u);
+  return { x: lerp(topX, botX, v), y: lerp(topY, botY, v) };
+}
+
+function isoRectPts(corners, u1, v1, u2, v2) {
+  return [isoMapPt(corners, u1, v1), isoMapPt(corners, u2, v1), isoMapPt(corners, u2, v2), isoMapPt(corners, u1, v2)];
+}
+
+function isoPtsStr(pts) { return pts.map(function (p) { return p.x.toFixed(1) + ',' + p.y.toFixed(1); }).join(' '); }
+
+function isoEllipsePts(corners, cu, cv, ru, rv, a1, a2, steps) {
+  a1 = a1 === undefined ? 0 : a1;
+  a2 = a2 === undefined ? Math.PI * 2 : a2;
+  steps = steps || 32;
+  var pts = [];
+  for (var i = 0; i <= steps; i++) {
+    var t = a1 + (a2 - a1) * i / steps;
+    pts.push(isoMapPt(corners, cu + Math.cos(t) * ru, cv + Math.sin(t) * rv));
+  }
+  return pts;
+}
+
+function isoPathStr(pts) {
+  var d = 'M' + pts[0].x.toFixed(1) + ',' + pts[0].y.toFixed(1);
+  for (var i = 1; i < pts.length; i++) d += ' L' + pts[i].x.toFixed(1) + ',' + pts[i].y.toFixed(1);
+  return d;
+}
+
+function buildIsoPitch(fieldType, background) {
+  var line = background === 'white' ? '#B9C2CC' : '#FFFFFF';
+  var fillLight = background === 'white' ? '#FFFFFF' : '#3C9A5C';
+  var fillDark = background === 'white' ? '#F4F7FA' : '#2E7D4F';
+  var sideWall = background === 'white' ? '#D7DEE4' : '#1F5A3A';
+  var sw = 2.4;
+
+  var corners = { TL: { x: 70, y: 12 }, TR: { x: 250, y: 12 }, BL: { x: 16, y: 150 }, BR: { x: 304, y: 150 } };
+  var wallDepth = 14;
+
+  var markup = '';
+
+  var wallPts = [corners.BL, corners.BR, { x: corners.BR.x, y: corners.BR.y + wallDepth }, { x: corners.BL.x, y: corners.BL.y + wallDepth }];
+  markup += '<polygon points="' + isoPtsStr(wallPts) + '" fill="' + sideWall + '"/>';
+
+  var facePts = [corners.TL, corners.TR, corners.BR, corners.BL];
+  markup += '<polygon points="' + isoPtsStr(facePts) + '" fill="' + fillLight + '"/>';
+
+  if (background !== 'white') {
+    var stripeCount = 10;
+    for (var i = 0; i < stripeCount; i++) {
+      if (i % 2 === 0) {
+        var sPts = isoRectPts(corners, i / stripeCount, 0, (i + 1) / stripeCount, 1);
+        markup += '<polygon points="' + isoPtsStr(sPts) + '" fill="' + fillDark + '"/>';
+      }
+    }
+  }
+
+  function rectOutline(u1, v1, u2, v2) {
+    return '<polygon points="' + isoPtsStr(isoRectPts(corners, u1, v1, u2, v2)) + '" fill="none" stroke="' + line + '" stroke-width="' + sw + '"/>';
+  }
+  function lineSeg(u1, v1, u2, v2, dash) {
+    var p1 = isoMapPt(corners, u1, v1), p2 = isoMapPt(corners, u2, v2);
+    var dashAttr = dash ? ' stroke-dasharray="5 5"' : '';
+    return '<line x1="' + p1.x.toFixed(1) + '" y1="' + p1.y.toFixed(1) + '" x2="' + p2.x.toFixed(1) + '" y2="' + p2.y.toFixed(1) + '" stroke="' + line + '" stroke-width="' + (dash ? 1.6 : sw) + '"' + dashAttr + '/>';
+  }
+  function ellipseArc(cu, cv, ru, rv, a1, a2) {
+    return '<path d="' + isoPathStr(isoEllipsePts(corners, cu, cv, ru, rv, a1, a2)) + '" fill="none" stroke="' + line + '" stroke-width="' + sw + '"/>';
+  }
+
+  switch (fieldType) {
+    case 'full':
+      markup += rectOutline(0.03, 0.06, 0.97, 0.94) + lineSeg(0.5, 0.06, 0.5, 0.94) +
+        ellipseArc(0.5, 0.5, 0.12, 0.16) +
+        rectOutline(0.03, 0.27, 0.18, 0.73) + rectOutline(0.03, 0.40, 0.08, 0.60) +
+        rectOutline(0.82, 0.27, 0.97, 0.73) + rectOutline(0.92, 0.40, 0.97, 0.60);
+      break;
+    case 'half_h':
+      markup += rectOutline(0.03, 0.06, 0.97, 0.94) +
+        rectOutline(0.03, 0.27, 0.22, 0.73) + rectOutline(0.03, 0.40, 0.1, 0.60) +
+        ellipseArc(0.97, 0.5, 0.17, 0.2, Math.PI * 0.62, Math.PI * 1.38);
+      break;
+    case 'half_v1':
+    case 'half_v2':
+      markup += rectOutline(0.14, 0.04, 0.86, 0.96) +
+        rectOutline(0.28, 0.72, 0.72, 0.96) + rectOutline(0.40, 0.86, 0.60, 0.96) +
+        ellipseArc(0.5, 0.04, 0.2, 0.14, Math.PI * 0.12, Math.PI * 0.88);
+      break;
+    case 'goal_area':
+      markup += rectOutline(0.08, 0.06, 0.92, 0.95) +
+        rectOutline(0.20, 0.30, 0.80, 0.95) + rectOutline(0.36, 0.62, 0.64, 0.95) +
+        ellipseArc(0.5, 0.08, 0.22, 0.16, Math.PI * 0.08, Math.PI * 0.92);
+      var g1 = isoMapPt(corners, 0.42, 0.95), g2 = isoMapPt(corners, 0.58, 0.95);
+      markup += '<rect x="' + Math.min(g1.x, g2.x).toFixed(1) + '" y="' + (Math.min(g1.y, g2.y) - 6).toFixed(1) + '" width="' + Math.abs(g2.x - g1.x).toFixed(1) + '" height="8" fill="none" stroke="' + line + '" stroke-width="' + sw + '"/>';
+      break;
+    case 'final_third':
+      markup += rectOutline(0.03, 0.06, 0.97, 0.94) +
+        rectOutline(0.64, 0.22, 0.97, 0.78) + rectOutline(0.88, 0.38, 0.97, 0.62) +
+        ellipseArc(0.64, 0.5, 0.14, 0.18, Math.PI * 0.5, Math.PI * 1.5);
+      break;
+    case 'grid':
+      markup += rectOutline(0.03, 0.06, 0.97, 0.94);
+      for (var gx = 1; gx < 4; gx++) markup += lineSeg(gx / 4, 0.06, gx / 4, 0.94, true);
+      for (var gy = 1; gy < 3; gy++) { var v = 0.06 + (gy / 3) * 0.88; markup += lineSeg(0.03, v, 0.97, v, true); }
+      break;
+    case 'free':
+    default:
+      markup += '<polygon points="' + isoPtsStr(isoRectPts(corners, 0.04, 0.07, 0.96, 0.93)) + '" fill="none" stroke="' + line + '" stroke-width="1.6" stroke-dasharray="4 4" opacity="0.55"/>';
+      break;
+  }
+
+  return markup;
+}
+
+/* ================= PITCH RENDERING (flat — editing canvas & saved thumbs) ================= */
 
 function pitchMarkupFor(fieldType, background) {
   var line = background === 'white' ? '#9AA5B1' : '#FFFFFF';
